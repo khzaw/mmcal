@@ -1,0 +1,25 @@
+.calendar {
+  width: 100%;
+  height: 100%;
+  background-color: salmon;
+}
+
+.week {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  height: 1rem;
+  width: 1rem;
+}
+
+.day {
+  border: 1px solid black;
+}
+
+
+[data-span="1"] { grid-column-end: span 1; }
+[data-span="2"] { grid-column-end: span 2; }
+[data-span="3"] { grid-column-end: span 3; }
+[data-span="4"] { grid-column-end: span 4; }
+[data-span="5"] { grid-column-end: span 5; }
+[data-span="6"] { grid-column-end: span 6; }
+[data-span="7"] { grid-column-end: span 7; }

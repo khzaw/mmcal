@@ -4,6 +4,8 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
+    "moment": "^2.22.2",
+    "node-sass": "^4.9.3",
     "react": "^16.4.2",
     "react-dom": "^16.4.2",
     "recompose": "^0.30.0"
