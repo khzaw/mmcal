@@ -26,6 +26,8 @@ interface CalendarHeaderProps {
   onOpenCommandPalette: () => void;
 }
 
+const yearOptions = Array.from({ length: 301 }, (_, i) => 1900 + i);
+
 export function CalendarHeader({
   year,
   month,
@@ -39,9 +41,6 @@ export function CalendarHeader({
   onOpenCommandPalette,
 }: CalendarHeaderProps) {
   const { t } = useI18n();
-
-  const yearOptions: number[] = [];
-  for (let y = 1900; y <= 2200; y++) yearOptions.push(y);
 
   return (
     <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">

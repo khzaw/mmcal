@@ -3,6 +3,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useMemo,
   useState,
 } from "react";
 import { en } from "./en";
@@ -41,7 +42,10 @@ export function I18nProvider({
   }, []);
 
   const locale = locales[localeCode];
-  const value: I18nContextValue = { locale, localeCode, setLocale, t: locale };
+  const value = useMemo<I18nContextValue>(
+    () => ({ locale, localeCode, setLocale, t: locale }),
+    [locale, localeCode, setLocale],
+  );
 
   return <I18nContext value={value}>{children}</I18nContext>;
 }
