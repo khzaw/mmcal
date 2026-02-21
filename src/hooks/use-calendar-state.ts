@@ -23,7 +23,7 @@ type Action =
   | { type: "SET_YEAR"; year: number }
   | { type: "SET_MONTH"; month: number };
 
-function reducer(state: CalendarState, action: Action): CalendarState {
+export function reducer(state: CalendarState, action: Action): CalendarState {
   switch (action.type) {
     case "PREV": {
       if (state.view === "year") {

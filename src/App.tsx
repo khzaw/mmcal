@@ -76,19 +76,25 @@ function CalendarApp() {
     });
   }, [state.year, state.month, state.day, state.view]);
 
+  // Counter that increments on explicit navigation — forces infinite list to re-center
+  const [navKey, setNavKey] = useState(0);
+
   const handlePrev = useCallback(() => {
     directionRef.current = -1;
     dispatch({ type: "PREV" });
+    setNavKey((k) => k + 1);
   }, [dispatch]);
 
   const handleNext = useCallback(() => {
     directionRef.current = 1;
     dispatch({ type: "NEXT" });
+    setNavKey((k) => k + 1);
   }, [dispatch]);
 
   const handleToday = useCallback(() => {
     directionRef.current = 0;
     dispatch({ type: "TODAY" });
+    setNavKey((k) => k + 1);
   }, [dispatch]);
 
   useKeyboardNav({
@@ -125,9 +131,8 @@ function CalendarApp() {
   const swipeRef = useSwipeNav({
     onPrev: handlePrev,
     onNext: handleNext,
-    axis: state.view === "week" && isMobile ? "y" : "x",
-    swipeThreshold: state.view === "week" && isMobile ? 30 : 50,
-    enabled: state.view !== "year",
+    axis: "x",
+    enabled: state.view !== "year" && !(state.view === "week" && isMobile),
   });
 
   // Check if current view has any sabbath days
@@ -244,6 +249,7 @@ function CalendarApp() {
                       todayJdn={todayJdn}
                       direction={directionRef.current}
                       vertical={isMobile}
+                      scrollKey={navKey}
                     />
                   </Suspense>
                 </motion.div>
