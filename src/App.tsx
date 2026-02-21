@@ -32,6 +32,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { useCalendarState } from "@/hooks/use-calendar-state";
 import { useKeyboardNav } from "@/hooks/use-keyboard-nav";
+import { useSwipeNav } from "@/hooks/use-swipe-nav";
 import {
   cal_my,
   getDayInfo,
@@ -109,6 +110,26 @@ function CalendarApp() {
     t.myanmarMonths[midMonthMm.mm] ??
     getMonthName(midMonthMm.mm, midMonthMm.myt);
 
+  // Mobile detection for week-view swipe axis
+  const [isMobile, setIsMobile] = useState(
+    () => window.matchMedia("(max-width: 767px)").matches,
+  );
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+
+  // Swipe / mousewheel navigation
+  const swipeRef = useSwipeNav({
+    onPrev: handlePrev,
+    onNext: handleNext,
+    axis: state.view === "week" && isMobile ? "y" : "x",
+    swipeThreshold: state.view === "week" && isMobile ? 30 : 50,
+    enabled: state.view !== "year",
+  });
+
   // Check if current view has any sabbath days
   const hasSabbath = useMemo(() => {
     if (state.view === "year") return false;
@@ -183,7 +204,7 @@ function CalendarApp() {
 
         <div className="mt-4 flex flex-col lg:flex-row gap-4">
           {/* Calendar view — stable min-h prevents footer jumping between 4/5/6 row months */}
-          <div className="flex-1 min-w-0 md:min-h-[640px]">
+          <div ref={swipeRef} className="flex-1 min-w-0 md:min-h-[640px]">
             <AnimatePresence mode="wait">
               {state.view === "month" && (
                 <motion.div
@@ -222,6 +243,7 @@ function CalendarApp() {
                       }
                       todayJdn={todayJdn}
                       direction={directionRef.current}
+                      vertical={isMobile}
                     />
                   </Suspense>
                 </motion.div>

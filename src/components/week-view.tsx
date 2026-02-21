@@ -20,6 +20,8 @@ interface WeekViewProps {
   onSelectDay: (day: CalendarDayInfo) => void;
   todayJdn: number;
   direction?: number;
+  /** Use vertical slide animation (mobile list mode) */
+  vertical?: boolean;
 }
 
 export function WeekView({
@@ -30,6 +32,7 @@ export function WeekView({
   onSelectDay,
   todayJdn,
   direction = 0,
+  vertical = false,
 }: WeekViewProps) {
   const { t } = useI18n();
 
@@ -51,13 +54,18 @@ export function WeekView({
       <AnimatePresence mode="popLayout" initial={false}>
         <motion.div
           key={weekDays[0]?.jdn}
-          initial={{
-            x: direction > 0 ? 80 : direction < 0 ? -80 : 0,
-            opacity: 0,
-          }}
-          animate={{ x: 0, opacity: 1 }}
-          exit={{ x: direction > 0 ? -80 : 80, opacity: 0 }}
-          transition={{ duration: 0.2, ease: "easeInOut" }}
+          initial={
+            vertical
+              ? { y: direction > 0 ? 60 : direction < 0 ? -60 : 0, opacity: 0 }
+              : { x: direction > 0 ? 80 : direction < 0 ? -80 : 0, opacity: 0 }
+          }
+          animate={vertical ? { y: 0, opacity: 1 } : { x: 0, opacity: 1 }}
+          exit={
+            vertical
+              ? { y: direction > 0 ? -60 : 60, opacity: 0 }
+              : { x: direction > 0 ? -80 : 80, opacity: 0 }
+          }
+          transition={{ duration: 0.15, ease: "easeOut" }}
           className="grid grid-cols-1 md:grid-cols-7 md:grid-rows-1 gap-px bg-border/10 rounded-lg overflow-hidden md:min-h-[580px]"
         >
           {weekDays.map((d) => {
@@ -86,7 +94,7 @@ export function WeekView({
                   "hover:bg-accent/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset",
                   isToday && !isSelected && "bg-primary/5",
                   hasHoliday && !isSelected && "bg-destructive/10",
-                  isSelected && "bg-accent/15",
+                  isSelected && "bg-primary/10",
                 )}
               >
                 {/* Selected day indicator */}

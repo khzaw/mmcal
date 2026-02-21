@@ -120,7 +120,7 @@ export function CalendarGrid({
                   "hover:bg-accent/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset",
                   isToday && !isSelected && "bg-primary/5",
                   hasHoliday && !isSelected && "bg-destructive/10",
-                  isSelected && "bg-accent/15",
+                  isSelected && "bg-primary/10",
                 )}
               >
                 {/* Selected day indicator */}
