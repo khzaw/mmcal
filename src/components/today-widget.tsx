@@ -2,6 +2,7 @@ import { Badge } from "@/components/ui/badge"
 import type { CalendarDayInfo } from "@/lib/burmese-calendar"
 import { my2sy } from "@/lib/burmese-calendar"
 import { useI18n } from "@/lib/i18n/context"
+import { buildTodayBrief } from "@/lib/today-brief"
 import { cn } from "@/lib/utils"
 import { motion } from "framer-motion"
 import { AnimatedMoon } from "./animated-moon"
@@ -33,6 +34,7 @@ export function TodayWidget({ day }: TodayWidgetProps) {
     localeCode === "en"
       ? (EN_MONTH_SHORT[day.gregorian.month - 1] ?? gregorianMonthName)
       : gregorianMonthName
+  const dailyBrief = buildTodayBrief(day, t)
 
   return (
     <motion.section
@@ -88,6 +90,34 @@ export function TodayWidget({ day }: TodayWidgetProps) {
         <div className="rounded-lg bg-background/55 px-2 py-1.5">
           <p className="text-[10px] text-muted-foreground/80">{t.ui.yearType}</p>
           <p className="text-xs text-foreground truncate">{t.yearTypes[day.myanmar.myt]}</p>
+        </div>
+      </div>
+
+      <div className="mt-3">
+        <p
+          className={cn(
+            "text-[10px] text-muted-foreground/75 mb-1.5",
+            localeCode === "en" && "tracking-[0.06em]",
+          )}
+        >
+          {localeCode === "mm" ? "နေ့စဉ် အကျဉ်းချုပ်" : "Daily Brief"}
+        </p>
+        <div className="flex flex-wrap gap-1.5">
+          {dailyBrief.map((item) => (
+            <Badge
+              key={item.key}
+              variant="outline"
+              className={cn(
+                "rounded-full px-2 py-0.5 text-[10px] border-border/65 bg-background/60",
+                item.tone === "holiday" && "border-destructive/80 bg-destructive/85 text-white",
+                item.tone === "warning" && "border-amber-500/45 bg-amber-500/16 text-amber-200",
+                item.tone === "good" && "border-chart-2/45 bg-chart-2/14 text-chart-2",
+                item.tone === "neutral" && "text-muted-foreground",
+              )}
+            >
+              {item.label}
+            </Badge>
+          ))}
         </div>
       </div>
     </motion.section>

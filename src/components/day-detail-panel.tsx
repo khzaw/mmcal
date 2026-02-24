@@ -46,15 +46,15 @@ export function DayDetailPanel({ day }: DayDetailPanelProps) {
   const { t, localeCode } = useI18n()
   const { myanmar, gregorian, moonPhase, fortnightDay, weekday } = day
   const sasanaYear = my2sy(myanmar.my)
-  const mahabote = t.mahabote[cal_mahabote(myanmar.my, weekday) % 7]
-  const nakhat = t.nakhat[cal_nakhat(myanmar.my) % 3]
-  const nagahle = t.nagahle[cal_nagahle(myanmar.mm) % 4]
+  const mahabote = t.mahabote[cal_mahabote(myanmar.my, weekday) % 7] ?? ""
+  const nakhat = t.nakhat[cal_nakhat(myanmar.my) % 3] ?? ""
+  const nagahle = t.nagahle[cal_nagahle(myanmar.mm) % 4] ?? ""
   const yatyaza = cal_yatyaza(myanmar.mm, weekday)
   const pyathada = cal_pyathada(myanmar.mm, weekday)
 
   const allHolidays = [...day.holidays, ...day.holidays2]
 
-  const moonPhaseName = t.moonPhases[moonPhase]
+  const moonPhaseName = t.moonPhases[moonPhase] ?? day.moonPhaseName
   const gregorianMonthName = t.gregorianMonths[gregorian.month - 1] ?? ""
   const EN_MONTH_SHORT = [
     "Jan",
@@ -108,20 +108,20 @@ export function DayDetailPanel({ day }: DayDetailPanelProps) {
   const detailRows: Array<{ key: DetailKey; label: string; value: string }> = [
     {
       key: "myanmarYear",
-      label: t.ui.myanmarYear,
-      value: `${t.formatNumber(myanmar.my)} ${t.ui.me}`,
+      label: t.ui.myanmarYear ?? "Myanmar Year",
+      value: `${t.formatNumber(myanmar.my)} ${t.ui.me ?? "ME"}`,
     },
     {
       key: "sasanaYear",
-      label: t.ui.sasanaYear,
-      value: `${t.formatNumber(sasanaYear)} ${t.ui.be}`,
+      label: t.ui.sasanaYear ?? "Sasana Year",
+      value: `${t.formatNumber(sasanaYear)} ${t.ui.be ?? "BE"}`,
     },
-    { key: "yearType", label: t.ui.yearType, value: t.yearTypes[myanmar.myt] },
-    { key: "moonPhase", label: t.ui.moonPhase, value: moonPhaseName },
-    { key: "mahabote", label: t.ui.mahabote, value: mahabote },
-    { key: "nakhat", label: t.ui.nakhat, value: nakhat },
-    { key: "nagahle", label: t.ui.nagahle, value: nagahle },
-    { key: "sabbath", label: t.ui.sabbath, value: sabbathLabel },
+    { key: "yearType", label: t.ui.yearType ?? "Year Type", value: t.yearTypes[myanmar.myt] ?? "" },
+    { key: "moonPhase", label: t.ui.moonPhase ?? "Moon Phase", value: moonPhaseName },
+    { key: "mahabote", label: t.ui.mahabote ?? "Mahabote", value: mahabote },
+    { key: "nakhat", label: t.ui.nakhat ?? "Nakhat", value: nakhat },
+    { key: "nagahle", label: t.ui.nagahle ?? "Nagahle", value: nagahle },
+    { key: "sabbath", label: t.ui.sabbath ?? "Sabbath", value: sabbathLabel },
   ]
 
   const astroBadges = [
