@@ -63,8 +63,14 @@ jobs:
           SITE_URL: ${{ env.SITE_URL }}
         run: |
           set -euo pipefail
-          curl --fail --silent --show-error \
+          response="$(
+          curl --silent --show-error \
             -X POST "https://api.cloudflare.com/client/v4/zones/${CLOUDFLARE_ZONE_ID}/purge_cache" \
             -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
             -H "Content-Type: application/json" \
             --data "{\"files\":[\"${SITE_URL}/\",\"${SITE_URL}/index.html\",\"${SITE_URL}/sw.js\",\"${SITE_URL}/manifest.webmanifest\"]}"
+          )"
+
+          if [ "$(echo "$response" | jq -r '.success // false')" != "true" ]; then
+            echo "::warning::Cloudflare cache purge failed; deploy will continue. Response: $(echo "$response" | jq -c '{errors, messages}')"
+          fi
