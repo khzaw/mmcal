@@ -1,38 +1,26 @@
-import { AppHeader } from "@/components/app-header";
-import { CalendarGrid } from "@/components/calendar-grid";
-import { CalendarHeader } from "@/components/calendar-header";
-import { DayDetailPanel } from "@/components/day-detail-panel";
-import { ThemeProvider } from "@/components/theme-toggle";
-import { badgeStagger, fadeInUp, fadeInUpTransition } from "@/lib/animations";
-import { I18nProvider, useI18n } from "@/lib/i18n/context";
-import { AnimatePresence, motion } from "framer-motion";
-import {
-  Suspense,
-  lazy,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { AppHeader } from "@/components/app-header"
+import { CalendarGrid } from "@/components/calendar-grid"
+import { CalendarHeader } from "@/components/calendar-header"
+import { DayDetailPanel } from "@/components/day-detail-panel"
+import { ThemeProvider } from "@/components/theme-toggle"
+import { badgeStagger, fadeInUp, fadeInUpTransition } from "@/lib/animations"
+import { I18nProvider, useI18n } from "@/lib/i18n/context"
+import { AnimatePresence, motion } from "framer-motion"
+import { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState } from "react"
 
-const WeekView = lazy(() =>
-  import("@/components/week-view").then((m) => ({ default: m.WeekView })),
-);
-const YearView = lazy(() =>
-  import("@/components/year-view").then((m) => ({ default: m.YearView })),
-);
+const WeekView = lazy(() => import("@/components/week-view").then((m) => ({ default: m.WeekView })))
+const YearView = lazy(() => import("@/components/year-view").then((m) => ({ default: m.YearView })))
 const CommandPalette = lazy(() =>
   import("@/components/command-palette").then((m) => ({
     default: m.CommandPalette,
   })),
-);
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { useCalendarState } from "@/hooks/use-calendar-state";
-import { useKeyboardNav } from "@/hooks/use-keyboard-nav";
-import { useSwipeNav } from "@/hooks/use-swipe-nav";
+)
+import { Badge } from "@/components/ui/badge"
+import { Card, CardContent } from "@/components/ui/card"
+import { Separator } from "@/components/ui/separator"
+import { useCalendarState } from "@/hooks/use-calendar-state"
+import { useKeyboardNav } from "@/hooks/use-keyboard-nav"
+import { useSwipeNav } from "@/hooks/use-swipe-nav"
 import {
   cal_my,
   getDayInfo,
@@ -41,30 +29,30 @@ import {
   j2m,
   my2sy,
   w2j,
-} from "@/lib/burmese-calendar";
-import { readURLState, writeURLState } from "@/lib/url-state";
+} from "@/lib/burmese-calendar"
+import { readURLState, writeURLState } from "@/lib/url-state"
 
 function CalendarApp() {
-  const { state, dispatch, todayJdn, todayInfo } = useCalendarState();
-  const { t, localeCode, setLocale } = useI18n();
-  const [cmdOpen, setCmdOpen] = useState(false);
-  const directionRef = useRef(0);
+  const { state, dispatch, todayJdn, todayInfo } = useCalendarState()
+  const { t, localeCode, setLocale } = useI18n()
+  const [cmdOpen, setCmdOpen] = useState(false)
+  const directionRef = useRef(0)
 
   // URL state: hydrate on mount
   useEffect(() => {
-    const urlState = readURLState();
+    const urlState = readURLState()
     if (urlState.year && urlState.month) {
       dispatch({
         type: "GO_TO_DATE",
         year: urlState.year,
         month: urlState.month,
         day: urlState.day ?? 1,
-      });
+      })
     }
     if (urlState.view) {
-      dispatch({ type: "SET_VIEW", view: urlState.view });
+      dispatch({ type: "SET_VIEW", view: urlState.view })
     }
-  }, [dispatch]);
+  }, [dispatch])
 
   // URL state: sync on change
   useEffect(() => {
@@ -73,29 +61,29 @@ function CalendarApp() {
       month: state.month,
       day: state.day,
       view: state.view,
-    });
-  }, [state.year, state.month, state.day, state.view]);
+    })
+  }, [state.year, state.month, state.day, state.view])
 
   // Counter that increments on explicit navigation — forces infinite list to re-center
-  const [navKey, setNavKey] = useState(0);
+  const [navKey, setNavKey] = useState(0)
 
   const handlePrev = useCallback(() => {
-    directionRef.current = -1;
-    dispatch({ type: "PREV" });
-    setNavKey((k) => k + 1);
-  }, [dispatch]);
+    directionRef.current = -1
+    dispatch({ type: "PREV" })
+    setNavKey((k) => k + 1)
+  }, [dispatch])
 
   const handleNext = useCallback(() => {
-    directionRef.current = 1;
-    dispatch({ type: "NEXT" });
-    setNavKey((k) => k + 1);
-  }, [dispatch]);
+    directionRef.current = 1
+    dispatch({ type: "NEXT" })
+    setNavKey((k) => k + 1)
+  }, [dispatch])
 
   const handleToday = useCallback(() => {
-    directionRef.current = 0;
-    dispatch({ type: "TODAY" });
-    setNavKey((k) => k + 1);
-  }, [dispatch]);
+    directionRef.current = 0
+    dispatch({ type: "TODAY" })
+    setNavKey((k) => k + 1)
+  }, [dispatch])
 
   useKeyboardNav({
     onPrev: handlePrev,
@@ -104,28 +92,24 @@ function CalendarApp() {
     onSetView: (v) => dispatch({ type: "SET_VIEW", view: v }),
     onOpenCommandPalette: () => setCmdOpen(true),
     onEscape: () => {
-      if (cmdOpen) setCmdOpen(false);
+      if (cmdOpen) setCmdOpen(false)
     },
-  });
+  })
 
   // Myanmar year info for the current month
-  const midMonthJdn = Math.round(w2j(state.year, state.month, 15));
-  const midMonthMm = j2m(midMonthJdn);
-  const myYearInfo = cal_my(midMonthMm.my);
-  const mmMonthName =
-    t.myanmarMonths[midMonthMm.mm] ??
-    getMonthName(midMonthMm.mm, midMonthMm.myt);
+  const midMonthJdn = Math.round(w2j(state.year, state.month, 15))
+  const midMonthMm = j2m(midMonthJdn)
+  const myYearInfo = cal_my(midMonthMm.my)
+  const mmMonthName = t.myanmarMonths[midMonthMm.mm] ?? getMonthName(midMonthMm.mm, midMonthMm.myt)
 
   // Mobile detection for week-view swipe axis
-  const [isMobile, setIsMobile] = useState(
-    () => window.matchMedia("(max-width: 767px)").matches,
-  );
+  const [isMobile, setIsMobile] = useState(() => window.matchMedia("(max-width: 767px)").matches)
   useEffect(() => {
-    const mq = window.matchMedia("(max-width: 767px)");
-    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
-    mq.addEventListener("change", handler);
-    return () => mq.removeEventListener("change", handler);
-  }, []);
+    const mq = window.matchMedia("(max-width: 767px)")
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches)
+    mq.addEventListener("change", handler)
+    return () => mq.removeEventListener("change", handler)
+  }, [])
 
   // Swipe / mousewheel navigation
   const swipeRef = useSwipeNav({
@@ -133,31 +117,29 @@ function CalendarApp() {
     onNext: handleNext,
     axis: "x",
     enabled: state.view !== "year" && !(state.view === "week" && isMobile),
-  });
+  })
 
   // Check if current view has any sabbath days
   const hasSabbath = useMemo(() => {
-    if (state.view === "year") return false;
+    if (state.view === "year") return false
     if (state.view === "month") {
-      return getGregorianMonthDays(state.year, state.month).some(
-        (d) => d.sabbath === 1,
-      );
+      return getGregorianMonthDays(state.year, state.month).some((d) => d.sabbath === 1)
     }
     // week view
-    const centerJdn = Math.round(w2j(state.year, state.month, state.day));
-    const info = getDayInfo(centerJdn);
-    const startJdn = centerJdn - ((info.weekday + 6) % 7);
+    const centerJdn = Math.round(w2j(state.year, state.month, state.day))
+    const info = getDayInfo(centerJdn)
+    const startJdn = centerJdn - ((info.weekday + 6) % 7)
     for (let i = 0; i < 7; i++) {
-      if (getDayInfo(startJdn + i).sabbath === 1) return true;
+      if (getDayInfo(startJdn + i).sabbath === 1) return true
     }
-    return false;
-  }, [state.view, state.year, state.month, state.day]);
+    return false
+  }, [state.view, state.year, state.month, state.day])
 
   return (
     <main className="min-h-screen bg-background flex flex-col">
       <AppHeader todayInfo={todayInfo} />
 
-      <div className="max-w-7xl mx-auto px-4 py-4 md:py-8 xl:py-14 w-full flex-1 flex flex-col">
+      <div className="max-w-[1440px] mx-auto px-4 md:px-6 py-4 md:py-8 xl:py-12 w-full flex-1 flex flex-col">
         {/* Myanmar Year Summary */}
         <motion.div
           variants={badgeStagger.container}
@@ -166,18 +148,12 @@ function CalendarApp() {
           className="mb-4 flex flex-wrap items-center gap-2 md:gap-4 text-sm"
         >
           <motion.div variants={badgeStagger.item}>
-            <Badge
-              variant="secondary"
-              className="gap-1 text-xs font-medium leading-relaxed"
-            >
+            <Badge variant="secondary" className="gap-1 text-xs font-medium leading-relaxed">
               {t.ui.myanmarYear} {t.formatNumber(midMonthMm.my)}
             </Badge>
           </motion.div>
           <motion.div variants={badgeStagger.item}>
-            <Badge
-              variant="secondary"
-              className="gap-1 text-xs font-medium leading-relaxed"
-            >
+            <Badge variant="secondary" className="gap-1 text-xs font-medium leading-relaxed">
               {t.ui.sasanaYear} {t.formatNumber(my2sy(midMonthMm.my))}
             </Badge>
           </motion.div>
@@ -207,7 +183,9 @@ function CalendarApp() {
           onOpenCommandPalette={() => setCmdOpen(true)}
         />
 
-        <div className="mt-4 flex flex-col lg:flex-row gap-4">
+        <div className="divider-gradient mt-5" />
+
+        <div className="mt-5 flex flex-col lg:flex-row gap-5 lg:items-start">
           {/* Calendar view — stable min-h prevents footer jumping between 4/5/6 row months */}
           <div ref={swipeRef} className="flex-1 min-w-0 md:min-h-[640px]">
             <AnimatePresence mode="wait">
@@ -243,9 +221,7 @@ function CalendarApp() {
                       month={state.month}
                       day={state.day}
                       selectedJdn={state.selectedJdn}
-                      onSelectDay={(day) =>
-                        dispatch({ type: "SELECT_DAY", day })
-                      }
+                      onSelectDay={(day) => dispatch({ type: "SELECT_DAY", day })}
                       todayJdn={todayJdn}
                       direction={directionRef.current}
                       vertical={isMobile}
@@ -267,18 +243,16 @@ function CalendarApp() {
                       year={state.year}
                       selectedJdn={state.selectedJdn}
                       todayJdn={todayJdn}
-                      onSelectDay={(day) =>
-                        dispatch({ type: "SELECT_DAY", day })
-                      }
+                      onSelectDay={(day) => dispatch({ type: "SELECT_DAY", day })}
                       onGoToMonth={(m) => {
                         dispatch({
                           type: "SET_MONTH",
                           month: m,
-                        });
+                        })
                         dispatch({
                           type: "SET_VIEW",
                           view: "month",
-                        });
+                        })
                       }}
                     />
                   </Suspense>
@@ -297,10 +271,10 @@ function CalendarApp() {
                 animate="animate"
                 exit="exit"
                 transition={fadeInUpTransition}
-                className="lg:w-[320px] shrink-0"
+                className="lg:w-[380px] shrink-0"
               >
-                <Card className="sticky top-4 min-h-[360px]">
-                  <CardContent className="p-4 md:p-5">
+                <Card className="sticky top-4 min-h-[360px] rounded-3xl border-border/70 bg-card/70 backdrop-blur !py-3">
+                  <CardContent className="px-4 pt-1 pb-4 md:px-5 md:pt-1.5 md:pb-5">
                     {state.selectedDay ? (
                       <DayDetailPanel day={state.selectedDay} />
                     ) : (
@@ -333,9 +307,7 @@ function CalendarApp() {
           <CommandPalette
             open={cmdOpen}
             onClose={() => setCmdOpen(false)}
-            onGoToDate={(y, m, d) =>
-              dispatch({ type: "GO_TO_DATE", year: y, month: m, day: d })
-            }
+            onGoToDate={(y, m, d) => dispatch({ type: "GO_TO_DATE", year: y, month: m, day: d })}
             onSetView={(v) => dispatch({ type: "SET_VIEW", view: v })}
             onToday={handleToday}
             onToggleLocale={() => setLocale(localeCode === "mm" ? "en" : "mm")}
@@ -343,7 +315,7 @@ function CalendarApp() {
         </Suspense>
       )}
     </main>
-  );
+  )
 }
 
 export function App() {
@@ -353,5 +325,5 @@ export function App() {
         <CalendarApp />
       </I18nProvider>
     </ThemeProvider>
-  );
+  )
 }

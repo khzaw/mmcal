@@ -1,4 +1,9 @@
 import { cn } from "@/lib/utils";
+import {
+  getNewMoonInnerStars,
+  getOrbitalStars,
+  type OrbitalStarSpec,
+} from "@/lib/moon-starfield";
 import { motion } from "framer-motion";
 import { useId } from "react";
 
@@ -44,35 +49,30 @@ export function AnimatedMoon({
   const pad = 14;
   const vb = size + pad * 2;
 
-  // Stars scattered around all phases
-  const outerStars = [
-    { angle: 30, dist: r + 10, delay: 0, s: 2.5 },
-    { angle: 75, dist: r + 13, delay: 0.6, s: 1.8 },
-    { angle: 130, dist: r + 9, delay: 1.2, s: 2.2 },
-    { angle: 195, dist: r + 14, delay: 0.3, s: 1.5 },
-    { angle: 250, dist: r + 11, delay: 0.9, s: 2.0 },
-    { angle: 310, dist: r + 12, delay: 1.5, s: 1.6 },
-    { angle: 355, dist: r + 8, delay: 0.4, s: 2.8 },
-    { angle: 160, dist: r + 15, delay: 1.0, s: 1.3 },
-  ];
+  const outerStars = getOrbitalStars(phase);
 
   function renderStars(color: string, baseOpacity: number) {
     return outerStars.map((star, i) => {
-      const sx = half + Math.cos((star.angle * Math.PI) / 180) * star.dist;
-      const sy = half + Math.sin((star.angle * Math.PI) / 180) * star.dist;
+      const s = star as OrbitalStarSpec;
+      const dist = r + s.distOffset;
+      const sx = half + Math.cos((s.angle * Math.PI) / 180) * dist;
+      const sy = half + Math.sin((s.angle * Math.PI) / 180) * dist;
       return (
         <motion.g
           key={i}
           transform={`translate(${sx},${sy})`}
-          animate={{ opacity: [0, baseOpacity, 0], scale: [0.5, 1.2, 0.5] }}
+          animate={{
+            opacity: [0, baseOpacity * (s.opacityMul ?? 1), 0],
+            scale: [0.5, 1.2, 0.5],
+          }}
           transition={{
             duration: 2.6,
-            delay: star.delay + 0.4,
+            delay: s.delay + 0.4,
             repeat: Number.POSITIVE_INFINITY,
             ease: "easeInOut",
           }}
         >
-          <path d={starPath(star.s, star.s * 0.35)} fill={color} />
+          <path d={starPath(s.size, s.size * 0.35)} fill={color} />
         </motion.g>
       );
     });
@@ -246,8 +246,8 @@ export function AnimatedMoon({
               </radialGradient>
             </defs>
 
-            {/* Twinkling stars */}
-            {renderStars("var(--muted-foreground)", 0.5)}
+            {/* Twinkling stars (new moon gets denser, closer stars) */}
+            {renderStars("var(--muted-foreground)", 0.62)}
 
             {/* Expanding ring pulse */}
             <motion.circle
@@ -299,19 +299,14 @@ export function AnimatedMoon({
             <circle cx={half} cy={half} r={r} fill={`url(#inner-${id})`} />
 
             {/* Twinkling stars inside */}
-            {[
-              { x: half - r * 0.3, y: half - r * 0.25, delay: 0 },
-              { x: half + r * 0.2, y: half + r * 0.3, delay: 1.0 },
-              { x: half + r * 0.1, y: half - r * 0.4, delay: 1.8 },
-              { x: half - r * 0.15, y: half + r * 0.15, delay: 0.5 },
-            ].map((star, i) => (
+            {getNewMoonInnerStars(half, r).map((star, i) => (
               <motion.circle
                 key={`inner-star-${i}`}
                 cx={star.x}
                 cy={star.y}
-                r={0.7}
+                r={star.size}
                 fill="var(--muted-foreground)"
-                animate={{ opacity: [0, 0.5, 0] }}
+                animate={{ opacity: [0, star.maxOpacity, 0] }}
                 transition={{
                   duration: 2.8,
                   delay: star.delay,

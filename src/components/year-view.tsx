@@ -1,27 +1,27 @@
-import { getGregorianMonthDays } from "@/lib/burmese-calendar";
-import type { CalendarDayInfo } from "@/lib/burmese-calendar";
-import { gridCardStagger, springPresets } from "@/lib/animations";
-import { useI18n } from "@/lib/i18n/context";
-import { cn } from "@/lib/utils";
-import { motion } from "framer-motion";
-import { useMemo } from "react";
+import { gridCardStagger, springPresets } from "@/lib/animations"
+import { getGregorianMonthDays } from "@/lib/burmese-calendar"
+import type { CalendarDayInfo } from "@/lib/burmese-calendar"
+import { useI18n } from "@/lib/i18n/context"
+import { cn } from "@/lib/utils"
+import { motion } from "framer-motion"
+import { useMemo } from "react"
 
 interface YearViewProps {
-  year: number;
-  selectedJdn: number | null;
-  todayJdn: number;
-  onSelectDay: (day: CalendarDayInfo) => void;
-  onGoToMonth: (month: number) => void;
+  year: number
+  selectedJdn: number | null
+  todayJdn: number
+  onSelectDay: (day: CalendarDayInfo) => void
+  onGoToMonth: (month: number) => void
 }
 
 interface MiniMonthProps {
-  year: number;
-  month: number;
-  selectedJdn: number | null;
-  todayJdn: number;
-  onSelectDay: (day: CalendarDayInfo) => void;
-  onDoubleClickDay: () => void;
-  onHeaderClick: () => void;
+  year: number
+  month: number
+  selectedJdn: number | null
+  todayJdn: number
+  onSelectDay: (day: CalendarDayInfo) => void
+  onDoubleClickDay: () => void
+  onHeaderClick: () => void
 }
 
 function MiniMonth({
@@ -33,19 +33,16 @@ function MiniMonth({
   onDoubleClickDay,
   onHeaderClick,
 }: MiniMonthProps) {
-  const { t } = useI18n();
-  const days = useMemo(() => getGregorianMonthDays(year, month), [year, month]);
+  const { t } = useI18n()
+  const days = useMemo(() => getGregorianMonthDays(year, month), [year, month])
 
-  const firstDayWeekday = days[0]?.weekday ?? 0;
-  const blanks = (firstDayWeekday + 6) % 7; // Sunday-first display column
-  const cells: (CalendarDayInfo | null)[] = [
-    ...Array(blanks).fill(null),
-    ...days,
-  ];
-  while (cells.length % 7 !== 0) cells.push(null);
+  const firstDayWeekday = days[0]?.weekday ?? 0
+  const blanks = (firstDayWeekday + 6) % 7 // Sunday-first display column
+  const cells: (CalendarDayInfo | null)[] = [...Array(blanks).fill(null), ...days]
+  while (cells.length % 7 !== 0) cells.push(null)
 
   // Algorithm weekday indices in Sunday-first order
-  const SUNDAY_FIRST = [1, 2, 3, 4, 5, 6, 0];
+  const SUNDAY_FIRST = [1, 2, 3, 4, 5, 6, 0]
 
   return (
     <div className="p-2">
@@ -62,46 +59,41 @@ function MiniMonth({
             key={wd}
             className={cn(
               "text-center text-[8px] font-medium py-0.5",
-              i === 0 || i === 6
-                ? "text-destructive/70"
-                : "text-muted-foreground/70",
+              i === 0 || i === 6 ? "text-destructive/70" : "text-muted-foreground/70",
             )}
           >
             {(t.weekdaysShort[wd] ?? "").charAt(0)}
           </div>
         ))}
         {cells.map((day, index) => {
-          if (!day)
-            return <div key={`b-${index}`} className="w-full aspect-square" />;
+          if (!day) return <div key={`b-${index}`} className="w-full aspect-square" />
 
-          const isToday = day.jdn === todayJdn;
-          const isSelected = day.jdn === selectedJdn;
-          const isFullMoon = day.moonPhase === 1;
-          const isNewMoon = day.moonPhase === 3;
-          const isSunday = day.weekday === 1;
-          const isSaturday = day.weekday === 0;
-          const hasHoliday = day.holidays.length > 0;
+          const isToday = day.jdn === todayJdn
+          const isSelected = day.jdn === selectedJdn
+          const isFullMoon = day.moonPhase === 1
+          const isNewMoon = day.moonPhase === 3
+          const isSunday = day.weekday === 1
+          const isSaturday = day.weekday === 0
+          const hasHoliday = day.holidays.length > 0
 
           return (
             <button
               type="button"
               key={day.jdn}
               onClick={(e) => {
-                e.stopPropagation();
-                onSelectDay(day);
+                e.stopPropagation()
+                onSelectDay(day)
               }}
               onDoubleClick={(e) => {
-                e.stopPropagation();
-                onDoubleClickDay();
+                e.stopPropagation()
+                onDoubleClickDay()
               }}
               className={cn(
                 "w-full aspect-square flex items-center justify-center text-[9px] rounded-sm transition-colors relative",
                 "hover:bg-accent/60",
                 isSelected && "bg-primary text-primary-foreground",
                 isToday && !isSelected && "ring-1 ring-primary",
-                (isSunday || isSaturday || hasHoliday) &&
-                  !isSelected &&
-                  "text-destructive",
+                (isSunday || isSaturday || hasHoliday) && !isSelected && "text-destructive",
               )}
             >
               {t.formatNumber(day.gregorian.day)}
@@ -112,20 +104,14 @@ function MiniMonth({
                 <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-foreground" />
               )}
             </button>
-          );
+          )
         })}
       </div>
     </div>
-  );
+  )
 }
 
-export function YearView({
-  year,
-  selectedJdn,
-  todayJdn,
-  onSelectDay,
-  onGoToMonth,
-}: YearViewProps) {
+export function YearView({ year, selectedJdn, todayJdn, onSelectDay, onGoToMonth }: YearViewProps) {
   return (
     <motion.div
       variants={gridCardStagger.container}
@@ -137,9 +123,13 @@ export function YearView({
         <motion.div
           key={i}
           variants={gridCardStagger.item}
-          whileHover={{ scale: 1.02, boxShadow: "0 4px 12px rgba(0,0,0,0.08)" }}
+          whileHover={{
+            scale: 1.02,
+            y: -2,
+            boxShadow: "0 18px 30px -22px rgba(0,0,0,0.9)",
+          }}
           transition={springPresets.snappy}
-          className="bg-card rounded-lg border border-border/40 p-1"
+          className="bg-card/75 rounded-xl border border-border/60 p-1"
         >
           <MiniMonth
             year={year}
@@ -153,5 +143,5 @@ export function YearView({
         </motion.div>
       ))}
     </motion.div>
-  );
+  )
 }

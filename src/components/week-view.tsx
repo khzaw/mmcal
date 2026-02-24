@@ -1,36 +1,24 @@
-import type { CalendarDayInfo } from "@/lib/burmese-calendar";
-import {
-  cal_pyathada,
-  cal_yatyaza,
-  getDayInfo,
-  w2j,
-} from "@/lib/burmese-calendar";
-import { springPresets } from "@/lib/animations";
-import { useI18n } from "@/lib/i18n/context";
-import { cn } from "@/lib/utils";
-import { AnimatePresence, motion } from "framer-motion";
-import {
-  Fragment,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import { MoonPhaseIcon } from "./moon-phase-icon";
+import { springPresets } from "@/lib/animations"
+import type { CalendarDayInfo } from "@/lib/burmese-calendar"
+import { cal_pyathada, cal_yatyaza, getDayInfo, w2j } from "@/lib/burmese-calendar"
+import { useI18n } from "@/lib/i18n/context"
+import { cn } from "@/lib/utils"
+import { AnimatePresence, motion } from "framer-motion"
+import { Fragment, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react"
+import { MoonPhaseIcon } from "./moon-phase-icon"
 
 interface WeekViewProps {
-  year: number;
-  month: number;
-  day: number;
-  selectedJdn: number | null;
-  onSelectDay: (day: CalendarDayInfo) => void;
-  todayJdn: number;
-  direction?: number;
+  year: number
+  month: number
+  day: number
+  selectedJdn: number | null
+  onSelectDay: (day: CalendarDayInfo) => void
+  todayJdn: number
+  direction?: number
   /** Use infinite vertical list (mobile) */
-  vertical?: boolean;
+  vertical?: boolean
   /** Increments on explicit navigation — forces infinite list to re-center */
-  scrollKey?: number;
+  scrollKey?: number
 }
 
 export function WeekView({
@@ -44,19 +32,19 @@ export function WeekView({
   vertical = false,
   scrollKey = 0,
 }: WeekViewProps) {
-  const { t } = useI18n();
+  const { t } = useI18n()
 
   const weekDays = useMemo(() => {
-    const centerJdn = Math.round(w2j(year, month, day));
-    const info = getDayInfo(centerJdn);
-    const sundayOffset = (info.weekday + 6) % 7;
-    const startJdn = centerJdn - sundayOffset;
-    const days: CalendarDayInfo[] = [];
+    const centerJdn = Math.round(w2j(year, month, day))
+    const info = getDayInfo(centerJdn)
+    const sundayOffset = (info.weekday + 6) % 7
+    const startJdn = centerJdn - sundayOffset
+    const days: CalendarDayInfo[] = []
     for (let i = 0; i < 7; i++) {
-      days.push(getDayInfo(startJdn + i));
+      days.push(getDayInfo(startJdn + i))
     }
-    return days;
-  }, [year, month, day]);
+    return days
+  }, [year, month, day])
 
   if (vertical) {
     return (
@@ -69,7 +57,7 @@ export function WeekView({
         onSelectDay={onSelectDay}
         todayJdn={todayJdn}
       />
-    );
+    )
   }
 
   return (
@@ -87,29 +75,38 @@ export function WeekView({
           className="grid grid-cols-7 grid-rows-1 gap-px bg-border/10 rounded-lg overflow-hidden min-h-[580px]"
         >
           {weekDays.map((d) => {
-            const isToday = d.jdn === todayJdn;
-            const isSelected = d.jdn === selectedJdn;
-            const isSunday = d.weekday === 1;
-            const isSaturday = d.weekday === 0;
-            const hasHoliday = d.holidays.length > 0;
-            const isFullMoon = d.moonPhase === 1;
-            const isNewMoon = d.moonPhase === 3;
+            const isToday = d.jdn === todayJdn
+            const isSelected = d.jdn === selectedJdn
+            const isSunday = d.weekday === 1
+            const isSaturday = d.weekday === 0
+            const hasHoliday = d.holidays.length > 0
+            const isFullMoon = d.moonPhase === 1
+            const isNewMoon = d.moonPhase === 3
 
-            const monthName = t.myanmarMonths[d.myanmar.mm] ?? d.monthName;
-            const moonPhaseName = t.moonPhases[d.moonPhase];
-            const allHolidays = [...d.holidays, ...d.holidays2];
-            const yatyaza = cal_yatyaza(d.myanmar.mm, d.weekday);
-            const pyathada = cal_pyathada(d.myanmar.mm, d.weekday);
+            const monthName = t.myanmarMonths[d.myanmar.mm] ?? d.monthName
+            const moonPhaseName = t.moonPhases[d.moonPhase]
+            const allHolidays = [...d.holidays, ...d.holidays2]
+            const yatyaza = cal_yatyaza(d.myanmar.mm, d.weekday)
+            const pyathada = cal_pyathada(d.myanmar.mm, d.weekday)
 
             return (
               <motion.button
                 type="button"
                 key={d.jdn}
                 onClick={() => onSelectDay(d)}
+                whileHover={{ scale: 1.018, y: -1 }}
+                whileTap={{ scale: 0.985 }}
+                transition={{
+                  type: "spring",
+                  stiffness: 260,
+                  damping: 24,
+                  mass: 0.62,
+                }}
                 className={cn(
-                  "bg-card p-3 text-left transition-colors relative overflow-hidden",
+                  "bg-card p-3 text-left relative overflow-hidden",
+                  "transition-[transform,background-color,box-shadow] duration-300 ease-out will-change-transform",
                   "flex flex-col",
-                  "hover:bg-accent/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset",
+                  "hover:bg-accent/60 hover:shadow-[0_12px_26px_-16px_rgba(0,0,0,0.65)] focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset",
                   isToday && !isSelected && "bg-primary/5",
                   hasHoliday && !isSelected && "bg-destructive/10",
                   isSelected && "bg-primary/10",
@@ -139,8 +136,7 @@ export function WeekView({
                       "text-base leading-none inline-flex items-center justify-center",
                       isFullMoon &&
                         "bg-[var(--moon-full)] text-white font-bold rounded-full w-8 h-8",
-                      isNewMoon &&
-                        "bg-foreground text-background font-bold rounded-full w-8 h-8",
+                      isNewMoon && "bg-foreground text-background font-bold rounded-full w-8 h-8",
                       !isFullMoon && !isNewMoon && "text-lg font-semibold",
                       !isFullMoon &&
                         !isNewMoon &&
@@ -157,9 +153,7 @@ export function WeekView({
                   >
                     {t.formatNumber(d.gregorian.day)}
                   </span>
-                  {!isFullMoon && !isNewMoon && (
-                    <MoonPhaseIcon phase={d.moonPhase} size={16} />
-                  )}
+                  {!isFullMoon && !isNewMoon && <MoonPhaseIcon phase={d.moonPhase} size={16} />}
                 </div>
 
                 {/* Myanmar date */}
@@ -216,8 +210,7 @@ export function WeekView({
                       )}
                       {pyathada === 2 && (
                         <span className="text-[9px] text-destructive/60 bg-destructive/8 rounded px-1">
-                          {t.astro["Afternoon Pyathada"] ??
-                            "Afternoon Pyathada"}
+                          {t.astro["Afternoon Pyathada"] ?? "Afternoon Pyathada"}
                         </span>
                       )}
                       {d.astro.map((a, i) => (
@@ -243,12 +236,12 @@ export function WeekView({
                   <div className="absolute bottom-1 right-1 w-1.5 h-1.5 rounded-full bg-destructive" />
                 )}
               </motion.button>
-            );
+            )
           })}
         </motion.div>
       </AnimatePresence>
     </div>
-  );
+  )
 }
 
 // ---------------------------------------------------------------------------
@@ -263,108 +256,104 @@ function InfiniteWeekList({
   onSelectDay,
   todayJdn,
 }: {
-  year: number;
-  month: number;
-  day: number;
-  selectedJdn: number | null;
-  onSelectDay: (day: CalendarDayInfo) => void;
-  todayJdn: number;
+  year: number
+  month: number
+  day: number
+  selectedJdn: number | null
+  onSelectDay: (day: CalendarDayInfo) => void
+  todayJdn: number
 }) {
-  const { t } = useI18n();
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const topSentinelRef = useRef<HTMLDivElement>(null);
-  const bottomSentinelRef = useRef<HTMLDivElement>(null);
-  const prevScrollHeight = useRef(0);
-  const needsScroll = useRef(true);
-  const isExtendingTop = useRef(false);
+  const { t } = useI18n()
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const topSentinelRef = useRef<HTMLDivElement>(null)
+  const bottomSentinelRef = useRef<HTMLDivElement>(null)
+  const prevScrollHeight = useRef(0)
+  const needsScroll = useRef(true)
+  const isExtendingTop = useRef(false)
 
   // The actual navigated day (for scroll targeting)
-  const targetJdn = useMemo(
-    () => Math.round(w2j(year, month, day)),
-    [year, month, day],
-  );
+  const targetJdn = useMemo(() => Math.round(w2j(year, month, day)), [year, month, day])
 
   // Sunday JDN of the current week (for range computation)
   const centerJdn = useMemo(() => {
-    const info = getDayInfo(targetJdn);
-    return targetJdn - ((info.weekday + 6) % 7);
-  }, [targetJdn]);
+    const info = getDayInfo(targetJdn)
+    return targetJdn - ((info.weekday + 6) % 7)
+  }, [targetJdn])
 
-  const [rangeStart, setRangeStart] = useState(() => centerJdn - 14);
-  const [rangeEnd, setRangeEnd] = useState(() => centerJdn + 21);
+  const [rangeStart, setRangeStart] = useState(() => centerJdn - 14)
+  const [rangeEnd, setRangeEnd] = useState(() => centerJdn + 21)
 
   // Reset when navigated externally (Today button, header arrows, etc.)
   useEffect(() => {
-    setRangeStart(centerJdn - 14);
-    setRangeEnd(centerJdn + 21);
-    needsScroll.current = true;
-  }, [centerJdn]);
+    setRangeStart(centerJdn - 14)
+    setRangeEnd(centerJdn + 21)
+    needsScroll.current = true
+  }, [centerJdn])
 
   const days = useMemo(() => {
-    const result: CalendarDayInfo[] = [];
+    const result: CalendarDayInfo[] = []
     for (let jdn = rangeStart; jdn < rangeEnd; jdn++) {
-      result.push(getDayInfo(jdn));
+      result.push(getDayInfo(jdn))
     }
-    return result;
-  }, [rangeStart, rangeEnd]);
+    return result
+  }, [rangeStart, rangeEnd])
 
   // Scroll to center the current day in the viewport on mount / navigation
   useLayoutEffect(() => {
-    if (!needsScroll.current) return;
-    needsScroll.current = false;
-    const container = scrollRef.current;
-    if (!container) return;
-    const el = container.querySelector(
-      `[data-jdn="${targetJdn}"]`,
-    ) as HTMLElement | null;
+    if (!needsScroll.current) return
+    needsScroll.current = false
+    const container = scrollRef.current
+    if (!container) return
+    const el = container.querySelector(`[data-jdn="${targetJdn}"]`) as HTMLElement | null
     if (el) {
-      container.scrollTop =
-        el.offsetTop - container.clientHeight / 2 + el.offsetHeight / 2;
+      container.scrollTop = el.offsetTop - container.clientHeight / 2 + el.offsetHeight / 2
     }
-  });
+  })
 
   // Compensate scroll position after prepending days at the top
   useLayoutEffect(() => {
-    if (!prevScrollHeight.current) return;
-    const container = scrollRef.current;
-    if (!container) return;
-    const diff = container.scrollHeight - prevScrollHeight.current;
+    // Keep this effect keyed to rangeStart so prepends restore scroll position.
+    void rangeStart
+    if (!prevScrollHeight.current) return
+    const container = scrollRef.current
+    if (!container) return
+    const diff = container.scrollHeight - prevScrollHeight.current
     if (diff > 0) {
-      container.scrollTop += diff;
+      container.scrollTop += diff
     }
-    prevScrollHeight.current = 0;
-    isExtendingTop.current = false;
-  }, [rangeStart]);
+    prevScrollHeight.current = 0
+    isExtendingTop.current = false
+  }, [rangeStart])
 
   // IntersectionObserver — load more days when sentinels enter viewport
   useEffect(() => {
-    const container = scrollRef.current;
-    if (!container) return;
+    // Recreate observer when the visible range changes.
+    void rangeStart
+    void rangeEnd
+    const container = scrollRef.current
+    if (!container) return
 
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
-          if (!entry.isIntersecting) continue;
-          if (
-            entry.target === topSentinelRef.current &&
-            !isExtendingTop.current
-          ) {
-            isExtendingTop.current = true;
-            prevScrollHeight.current = container.scrollHeight;
-            setRangeStart((prev) => prev - 7);
+          if (!entry.isIntersecting) continue
+          if (entry.target === topSentinelRef.current && !isExtendingTop.current) {
+            isExtendingTop.current = true
+            prevScrollHeight.current = container.scrollHeight
+            setRangeStart((prev) => prev - 7)
           } else if (entry.target === bottomSentinelRef.current) {
-            setRangeEnd((prev) => prev + 7);
+            setRangeEnd((prev) => prev + 7)
           }
         }
       },
       { root: container, rootMargin: "100px" },
-    );
+    )
 
-    if (topSentinelRef.current) observer.observe(topSentinelRef.current);
-    if (bottomSentinelRef.current) observer.observe(bottomSentinelRef.current);
+    if (topSentinelRef.current) observer.observe(topSentinelRef.current)
+    if (bottomSentinelRef.current) observer.observe(bottomSentinelRef.current)
 
-    return () => observer.disconnect();
-  }, [rangeStart, rangeEnd]);
+    return () => observer.disconnect()
+  }, [rangeStart, rangeEnd])
 
   return (
     <div
@@ -374,33 +363,32 @@ function InfiniteWeekList({
       <div ref={topSentinelRef} className="h-px" />
 
       {days.map((d, i) => {
-        const isToday = d.jdn === todayJdn;
-        const isSelected = d.jdn === selectedJdn;
-        const isSunday = d.weekday === 1;
-        const isSaturday = d.weekday === 0;
-        const hasHoliday = d.holidays.length > 0;
-        const isFullMoon = d.moonPhase === 1;
-        const isNewMoon = d.moonPhase === 3;
-        const monthName = t.myanmarMonths[d.myanmar.mm] ?? d.monthName;
-        const moonPhaseName = t.moonPhases[d.moonPhase];
-        const allHolidays = [...d.holidays, ...d.holidays2];
-        const yatyaza = cal_yatyaza(d.myanmar.mm, d.weekday);
-        const pyathada = cal_pyathada(d.myanmar.mm, d.weekday);
+        const isToday = d.jdn === todayJdn
+        const isSelected = d.jdn === selectedJdn
+        const isSunday = d.weekday === 1
+        const isSaturday = d.weekday === 0
+        const hasHoliday = d.holidays.length > 0
+        const isFullMoon = d.moonPhase === 1
+        const isNewMoon = d.moonPhase === 3
+        const monthName = t.myanmarMonths[d.myanmar.mm] ?? d.monthName
+        const moonPhaseName = t.moonPhases[d.moonPhase]
+        const allHolidays = [...d.holidays, ...d.holidays2]
+        const yatyaza = cal_yatyaza(d.myanmar.mm, d.weekday)
+        const pyathada = cal_pyathada(d.myanmar.mm, d.weekday)
 
         // Show a sticky month header when the month changes
-        const prevDay = i > 0 ? days[i - 1] : null;
+        const prevDay = i > 0 ? days[i - 1] : null
         const showMonthHeader =
-          i === 0 || (prevDay && prevDay.gregorian.month !== d.gregorian.month);
+          i === 0 || (prevDay && prevDay.gregorian.month !== d.gregorian.month)
 
         // Thin week separator on Sundays (unless there's already a month header)
-        const showWeekSep = isSunday && i > 0 && !showMonthHeader;
+        const showWeekSep = isSunday && i > 0 && !showMonthHeader
 
         return (
           <Fragment key={d.jdn}>
             {showMonthHeader && (
               <div className="sticky top-0 z-10 bg-background/90 backdrop-blur-sm px-3 py-1.5 text-xs font-medium text-muted-foreground border-b border-border/30">
-                {t.gregorianMonths[d.gregorian.month - 1]}{" "}
-                {t.formatNumber(d.gregorian.year)}
+                {t.gregorianMonths[d.gregorian.month - 1]} {t.formatNumber(d.gregorian.year)}
               </div>
             )}
             {showWeekSep && <div className="h-px bg-border/20" />}
@@ -418,9 +406,7 @@ function InfiniteWeekList({
               )}
             >
               {/* Selected indicator — left edge bar */}
-              {isSelected && (
-                <div className="absolute inset-y-0 left-0 w-[3px] bg-primary" />
-              )}
+              {isSelected && <div className="absolute inset-y-0 left-0 w-[3px] bg-primary" />}
 
               <div className="flex items-center gap-3 w-full min-w-0">
                 {/* Weekday + date */}
@@ -428,9 +414,7 @@ function InfiniteWeekList({
                   <span
                     className={cn(
                       "text-[11px] font-medium w-14 truncate",
-                      isSunday || isSaturday
-                        ? "text-destructive"
-                        : "text-muted-foreground",
+                      isSunday || isSaturday ? "text-destructive" : "text-muted-foreground",
                     )}
                   >
                     {t.weekdaysShort[d.weekday]}
@@ -511,10 +495,10 @@ function InfiniteWeekList({
               )}
             </button>
           </Fragment>
-        );
+        )
       })}
 
       <div ref={bottomSentinelRef} className="h-px" />
     </div>
-  );
+  )
 }
