@@ -4,15 +4,23 @@ interface MoonPhaseIconProps {
   phase: number // 0=waxing, 1=full moon, 2=waning, 3=new moon
   size?: number
   className?: string
+  fullMoonTone?: "holiday" | "neutral"
 }
 
-export function MoonPhaseIcon({ phase, size = 16, className = "" }: MoonPhaseIconProps) {
+export function MoonPhaseIcon({
+  phase,
+  size = 16,
+  className = "",
+  fullMoonTone = "holiday",
+}: MoonPhaseIconProps) {
   const id = useId()
   const half = size / 2
   const r = half - 1
 
   if (phase === 1) {
-    // Full moon — red circle
+    // Full moon — holiday accent or neutral filled style
+    const fullMoonFill = fullMoonTone === "holiday" ? "var(--moon-full)" : "var(--foreground)"
+    const fullMoonStroke = fullMoonTone === "holiday" ? "var(--moon-full)" : "var(--foreground)"
     return (
       <svg
         width={size}
@@ -26,8 +34,8 @@ export function MoonPhaseIcon({ phase, size = 16, className = "" }: MoonPhaseIco
           cx={half}
           cy={half}
           r={r}
-          fill="var(--moon-full)"
-          stroke="var(--moon-full)"
+          fill={fullMoonFill}
+          stroke={fullMoonStroke}
           strokeWidth="0.5"
         />
       </svg>
@@ -35,7 +43,7 @@ export function MoonPhaseIcon({ phase, size = 16, className = "" }: MoonPhaseIco
   }
 
   if (phase === 3) {
-    // New moon — dark circle with subtle stroke
+    // New moon — neutral outlined (non-filled) circle
     return (
       <svg
         width={size}
@@ -49,9 +57,9 @@ export function MoonPhaseIcon({ phase, size = 16, className = "" }: MoonPhaseIco
           cx={half}
           cy={half}
           r={r}
-          fill="var(--moon-new)"
-          stroke="var(--muted-foreground)"
-          strokeWidth="0.5"
+          fill="var(--background)"
+          stroke="var(--foreground)"
+          strokeWidth="0.9"
         />
       </svg>
     )

@@ -75,6 +75,7 @@ function MiniMonth({
           const isSunday = day.weekday === 1
           const isSaturday = day.weekday === 0
           const hasHoliday = day.holidays.length > 0
+          const isHolidayFullMoon = isFullMoon && hasHoliday
 
           return (
             <button
@@ -98,10 +99,15 @@ function MiniMonth({
             >
               {t.formatNumber(day.gregorian.day)}
               {isFullMoon && !isSelected && (
-                <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-[var(--moon-full)]" />
+                <span
+                  className={cn(
+                    "absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full",
+                    isHolidayFullMoon ? "bg-[var(--moon-full)]" : "bg-foreground",
+                  )}
+                />
               )}
               {isNewMoon && !isSelected && (
-                <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-foreground" />
+                <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-background ring-1 ring-foreground/70" />
               )}
             </button>
           )

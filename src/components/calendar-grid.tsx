@@ -86,6 +86,7 @@ export function CalendarGrid({
             const isSaturday = day.weekday === 0
             const hasHoliday = day.holidays.length > 0
             const isFullMoon = day.moonPhase === 1
+            const isHolidayFullMoon = isFullMoon && hasHoliday
             const isNewMoon = day.moonPhase === 3
 
             const monthName = t.myanmarMonths[day.myanmar.mm] ?? day.monthName
@@ -141,10 +142,13 @@ export function CalendarGrid({
                   <span
                     className={cn(
                       "text-xl md:text-2xl leading-none inline-flex items-center justify-center",
-                      isFullMoon &&
+                      isHolidayFullMoon &&
                         "bg-[var(--moon-full)] text-white font-bold rounded-full w-7 h-7 md:w-9 md:h-9 text-base md:text-lg",
-                      isNewMoon &&
+                      isFullMoon &&
+                        !hasHoliday &&
                         "bg-foreground text-background font-bold rounded-full w-7 h-7 md:w-9 md:h-9 text-base md:text-lg",
+                      isNewMoon &&
+                        "bg-background text-foreground border border-foreground/55 font-bold rounded-full w-7 h-7 md:w-9 md:h-9 text-base md:text-lg",
                       !isFullMoon && !isNewMoon && "font-semibold",
                       !isFullMoon &&
                         !isNewMoon &&
@@ -168,11 +172,13 @@ export function CalendarGrid({
                   <p
                     className={cn(
                       "text-[10px] md:text-[11px] leading-relaxed truncate",
-                      isFullMoon
+                      isHolidayFullMoon
                         ? "text-[var(--moon-full-text)]/70 font-medium"
-                        : isNewMoon
-                          ? "text-[var(--moon-new-text)]/60"
-                          : "text-muted-foreground/70",
+                        : isFullMoon
+                          ? "text-foreground/70"
+                          : isNewMoon
+                            ? "text-foreground/62"
+                            : "text-muted-foreground/70",
                     )}
                   >
                     {myanmarLabel}

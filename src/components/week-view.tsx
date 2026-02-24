@@ -81,6 +81,7 @@ export function WeekView({
             const isSaturday = d.weekday === 0
             const hasHoliday = d.holidays.length > 0
             const isFullMoon = d.moonPhase === 1
+            const isHolidayFullMoon = isFullMoon && hasHoliday
             const isNewMoon = d.moonPhase === 3
 
             const monthName = t.myanmarMonths[d.myanmar.mm] ?? d.monthName
@@ -134,9 +135,13 @@ export function WeekView({
                   <span
                     className={cn(
                       "text-base leading-none inline-flex items-center justify-center",
-                      isFullMoon &&
+                      isHolidayFullMoon &&
                         "bg-[var(--moon-full)] text-white font-bold rounded-full w-8 h-8",
-                      isNewMoon && "bg-foreground text-background font-bold rounded-full w-8 h-8",
+                      isFullMoon &&
+                        !hasHoliday &&
+                        "bg-foreground text-background font-bold rounded-full w-8 h-8",
+                      isNewMoon &&
+                        "bg-background text-foreground border border-foreground/55 font-bold rounded-full w-8 h-8",
                       !isFullMoon && !isNewMoon && "text-lg font-semibold",
                       !isFullMoon &&
                         !isNewMoon &&
@@ -164,11 +169,13 @@ export function WeekView({
                   <p
                     className={cn(
                       "text-[11px] leading-relaxed",
-                      isFullMoon
+                      isHolidayFullMoon
                         ? "text-[var(--moon-full-text)] font-medium"
-                        : isNewMoon
-                          ? "text-[var(--moon-new-text)]"
-                          : "text-muted-foreground",
+                        : isFullMoon
+                          ? "text-foreground/72"
+                          : isNewMoon
+                            ? "text-foreground/62"
+                            : "text-muted-foreground",
                     )}
                   >
                     {moonPhaseName} {t.formatNumber(d.fortnightDay)}
@@ -369,6 +376,7 @@ function InfiniteWeekList({
         const isSaturday = d.weekday === 0
         const hasHoliday = d.holidays.length > 0
         const isFullMoon = d.moonPhase === 1
+        const isHolidayFullMoon = isFullMoon && hasHoliday
         const isNewMoon = d.moonPhase === 3
         const monthName = t.myanmarMonths[d.myanmar.mm] ?? d.monthName
         const moonPhaseName = t.moonPhases[d.moonPhase]
@@ -422,8 +430,9 @@ function InfiniteWeekList({
                   <span
                     className={cn(
                       "text-sm font-semibold tabular-nums",
-                      isFullMoon && "text-[var(--moon-full-text)]",
-                      isNewMoon && "text-[var(--moon-new-text)]",
+                      isHolidayFullMoon && "text-[var(--moon-full-text)]",
+                      isFullMoon && !hasHoliday && "text-foreground",
+                      isNewMoon && "text-foreground/72",
                       !isFullMoon &&
                         !isNewMoon &&
                         (isSunday || isSaturday || hasHoliday) &&
@@ -434,7 +443,11 @@ function InfiniteWeekList({
                   >
                     {t.formatNumber(d.gregorian.day)}
                   </span>
-                  <MoonPhaseIcon phase={d.moonPhase} size={14} />
+                  <MoonPhaseIcon
+                    phase={d.moonPhase}
+                    size={14}
+                    fullMoonTone={hasHoliday ? "holiday" : "neutral"}
+                  />
                 </div>
 
                 {/* Myanmar date */}
@@ -442,11 +455,13 @@ function InfiniteWeekList({
                   <p
                     className={cn(
                       "text-[11px] leading-snug truncate",
-                      isFullMoon
+                      isHolidayFullMoon
                         ? "text-[var(--moon-full-text)]/70"
-                        : isNewMoon
-                          ? "text-[var(--moon-new-text)]/60"
-                          : "text-muted-foreground/70",
+                        : isFullMoon
+                          ? "text-foreground/70"
+                          : isNewMoon
+                            ? "text-foreground/62"
+                            : "text-muted-foreground/70",
                     )}
                   >
                     {monthName} {moonPhaseName} {t.formatNumber(d.fortnightDay)}
