@@ -1,62 +1,53 @@
-import { cn } from "@/lib/utils";
-import {
-  getNewMoonInnerStars,
-  getOrbitalStars,
-  type OrbitalStarSpec,
-} from "@/lib/moon-starfield";
-import { motion } from "framer-motion";
-import { useId } from "react";
+import { type OrbitalStarSpec, getNewMoonInnerStars, getOrbitalStars } from "@/lib/moon-starfield"
+import { cn } from "@/lib/utils"
+import { motion } from "framer-motion"
+import { useId } from "react"
 
 interface AnimatedMoonProps {
-  phase: number; // 0=waxing, 1=full moon, 2=waning, 3=new moon
-  fortnightDay: number; // 1-15
-  size?: number;
-  className?: string;
+  phase: number // 0=waxing, 1=full moon, 2=waning, 3=new moon
+  fortnightDay: number // 1-15
+  size?: number
+  className?: string
 }
 
 /** 4-pointed star path centered at (0,0) */
 function starPath(outerR: number, innerR: number): string {
-  const pts: string[] = [];
+  const pts: string[] = []
   for (let i = 0; i < 8; i++) {
-    const r = i % 2 === 0 ? outerR : innerR;
-    const a = (i * Math.PI) / 4 - Math.PI / 2;
-    pts.push(`${r * Math.cos(a)},${r * Math.sin(a)}`);
+    const r = i % 2 === 0 ? outerR : innerR
+    const a = (i * Math.PI) / 4 - Math.PI / 2
+    pts.push(`${r * Math.cos(a)},${r * Math.sin(a)}`)
   }
-  return `M${pts.join("L")}Z`;
+  return `M${pts.join("L")}Z`
 }
 
 /**
  * Whimsical animated moon phase display for the day detail panel.
  * Full moon renders as warm gold (not red — red is only for the calendar grid).
  */
-export function AnimatedMoon({
-  phase,
-  fortnightDay,
-  size = 64,
-  className,
-}: AnimatedMoonProps) {
-  const id = useId();
-  const half = size / 2;
-  const r = half - 4;
+export function AnimatedMoon({ phase, fortnightDay, size = 64, className }: AnimatedMoonProps) {
+  const id = useId()
+  const half = size / 2
+  const r = half - 4
 
-  const progress = fortnightDay / 15;
-  const terminatorRx = r * Math.abs(1 - 2 * progress);
+  const progress = fortnightDay / 15
+  const terminatorRx = r * Math.abs(1 - 2 * progress)
 
-  const isWaxing = phase === 0;
-  const isFullMoon = phase === 1;
-  const isNewMoon = phase === 3;
+  const isWaxing = phase === 0
+  const isFullMoon = phase === 1
+  const isNewMoon = phase === 3
 
-  const pad = 14;
-  const vb = size + pad * 2;
+  const pad = 14
+  const vb = size + pad * 2
 
-  const outerStars = getOrbitalStars(phase);
+  const outerStars = getOrbitalStars(phase)
 
   function renderStars(color: string, baseOpacity: number) {
     return outerStars.map((star, i) => {
-      const s = star as OrbitalStarSpec;
-      const dist = r + s.distOffset;
-      const sx = half + Math.cos((s.angle * Math.PI) / 180) * dist;
-      const sy = half + Math.sin((s.angle * Math.PI) / 180) * dist;
+      const s = star as OrbitalStarSpec
+      const dist = r + s.distOffset
+      const sx = half + Math.cos((s.angle * Math.PI) / 180) * dist
+      const sy = half + Math.sin((s.angle * Math.PI) / 180) * dist
       return (
         <motion.g
           key={i}
@@ -74,8 +65,8 @@ export function AnimatedMoon({
         >
           <path d={starPath(s.size, s.size * 0.35)} fill={color} />
         </motion.g>
-      );
-    });
+      )
+    })
   }
 
   if (isFullMoon) {
@@ -86,7 +77,7 @@ export function AnimatedMoon({
       { angle: 210, dist: r + 8, delay: 0.2, size: 1.1 },
       { angle: 280, dist: r + 6, delay: 0.6, size: 1.2 },
       { angle: 340, dist: r + 7, delay: 1.0, size: 0.9 },
-    ];
+    ]
 
     return (
       <motion.div
@@ -132,7 +123,7 @@ export function AnimatedMoon({
             </defs>
 
             {/* Twinkling stars */}
-            {renderStars("#F5D060", 0.8)}
+            {renderStars("#F5D060", 0.78)}
 
             {/* Outer glow pulse */}
             <motion.circle
@@ -173,8 +164,8 @@ export function AnimatedMoon({
 
             {/* Orbiting sparkles */}
             {sparkles.map((s, i) => {
-              const sx = half + Math.cos((s.angle * Math.PI) / 180) * s.dist;
-              const sy = half + Math.sin((s.angle * Math.PI) / 180) * s.dist;
+              const sx = half + Math.cos((s.angle * Math.PI) / 180) * s.dist
+              const sy = half + Math.sin((s.angle * Math.PI) / 180) * s.dist
               return (
                 <motion.circle
                   key={`sparkle-${i}`}
@@ -194,12 +185,12 @@ export function AnimatedMoon({
                     ease: "easeInOut",
                   }}
                 />
-              );
+              )
             })}
           </svg>
         </motion.div>
       </motion.div>
-    );
+    )
   }
 
   if (isNewMoon) {
@@ -230,24 +221,16 @@ export function AnimatedMoon({
             <defs>
               <radialGradient id={`rim-${id}`} cx="28%" cy="22%" r="75%">
                 <stop offset="75%" stopColor="transparent" />
-                <stop
-                  offset="100%"
-                  stopColor="var(--muted-foreground)"
-                  stopOpacity="0.25"
-                />
+                <stop offset="100%" stopColor="var(--muted-foreground)" stopOpacity="0.25" />
               </radialGradient>
               <radialGradient id={`inner-${id}`} cx="55%" cy="60%" r="50%">
-                <stop
-                  offset="0%"
-                  stopColor="var(--muted-foreground)"
-                  stopOpacity="0.06"
-                />
+                <stop offset="0%" stopColor="var(--muted-foreground)" stopOpacity="0.06" />
                 <stop offset="100%" stopColor="transparent" />
               </radialGradient>
             </defs>
 
             {/* Twinkling stars (new moon gets denser, closer stars) */}
-            {renderStars("var(--muted-foreground)", 0.62)}
+            {renderStars("var(--muted-foreground)", 0.68)}
 
             {/* Expanding ring pulse */}
             <motion.circle
@@ -318,13 +301,13 @@ export function AnimatedMoon({
           </svg>
         </motion.div>
       </motion.div>
-    );
+    )
   }
 
   // Waxing or Waning — animated terminator sweep with gentle float
-  const clipId = `moon-clip-${id}`;
-  const litGradId = `lit-grad-${id}`;
-  const litColor = "#D4A017";
+  const clipId = `moon-clip-${id}`
+  const litGradId = `lit-grad-${id}`
+  const litColor = "#D4A017"
 
   return (
     <motion.div
@@ -354,12 +337,7 @@ export function AnimatedMoon({
             <clipPath id={clipId}>
               <circle cx={half} cy={half} r={r} />
             </clipPath>
-            <radialGradient
-              id={litGradId}
-              cx={isWaxing ? "65%" : "35%"}
-              cy="38%"
-              r="65%"
-            >
+            <radialGradient id={litGradId} cx={isWaxing ? "65%" : "35%"} cy="38%" r="65%">
               <stop offset="0%" stopColor="#F5D060" />
               <stop offset="50%" stopColor="#E8C030" />
               <stop offset="100%" stopColor={litColor} />
@@ -370,7 +348,7 @@ export function AnimatedMoon({
           </defs>
 
           {/* Twinkling stars */}
-          {renderStars("#E8C030", 0.6)}
+          {renderStars("#E8C030", 0.72)}
 
           {/* Subtle glow behind lit portion */}
           <motion.circle
@@ -403,20 +381,12 @@ export function AnimatedMoon({
           <g clipPath={`url(#${clipId})`}>
             {isWaxing ? (
               <>
-                <rect
-                  x={half}
-                  y={half - r}
-                  width={r}
-                  height={r * 2}
-                  fill={`url(#${litGradId})`}
-                />
+                <rect x={half} y={half - r} width={r} height={r * 2} fill={`url(#${litGradId})`} />
                 <motion.ellipse
                   cx={half}
                   cy={half}
                   ry={r}
-                  fill={
-                    progress > 0.5 ? `url(#${litGradId})` : "var(--moon-new)"
-                  }
+                  fill={progress > 0.5 ? `url(#${litGradId})` : "var(--moon-new)"}
                   initial={{ rx: 0 }}
                   animate={{ rx: terminatorRx }}
                   transition={{
@@ -440,9 +410,7 @@ export function AnimatedMoon({
                   cx={half}
                   cy={half}
                   ry={r}
-                  fill={
-                    progress > 0.5 ? "var(--moon-new)" : `url(#${litGradId})`
-                  }
+                  fill={progress > 0.5 ? "var(--moon-new)" : `url(#${litGradId})`}
                   initial={{ rx: 0 }}
                   animate={{ rx: terminatorRx }}
                   transition={{
@@ -458,5 +426,5 @@ export function AnimatedMoon({
         </svg>
       </motion.div>
     </motion.div>
-  );
+  )
 }

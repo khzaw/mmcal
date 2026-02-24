@@ -28,7 +28,7 @@ export function AppHeader({ todayInfo }: AppHeaderProps) {
               className={cn(
                 "truncate text-foreground",
                 localeCode === "en"
-                  ? "text-sm md:text-base font-semibold uppercase tracking-[0.18em]"
+                  ? "text-sm md:text-base font-semibold tracking-[0.08em]"
                   : "text-lg font-bold tracking-tight leading-relaxed",
               )}
             >
@@ -43,7 +43,7 @@ export function AppHeader({ todayInfo }: AppHeaderProps) {
               transition={{ delay: 0.24, duration: 0.3 }}
               className={cn(
                 "hidden lg:inline text-xs text-muted-foreground whitespace-nowrap",
-                localeCode === "en" && "uppercase tracking-[0.12em]",
+                localeCode === "en" && "tracking-[0.06em]",
               )}
             >
               • {monthName} {moonPhaseName} {t.formatNumber(todayInfo.fortnightDay)} |{" "}

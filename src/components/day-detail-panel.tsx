@@ -113,7 +113,7 @@ export function DayDetailPanel({ day }: DayDetailPanelProps) {
                 <p
                   className={cn(
                     "text-[10px] md:text-[11px] text-muted-foreground/65",
-                    localeCode === "en" && "uppercase tracking-[0.16em]",
+                    localeCode === "en" && "tracking-[0.06em]",
                   )}
                 >
                   {t.weekdays[weekday]}
@@ -161,7 +161,7 @@ export function DayDetailPanel({ day }: DayDetailPanelProps) {
                   <span
                     className={cn(
                       "text-xs text-muted-foreground",
-                      localeCode === "en" && "uppercase tracking-[0.14em]",
+                      localeCode === "en" && "tracking-[0.06em]",
                     )}
                   >
                     {row.label}
@@ -180,7 +180,7 @@ export function DayDetailPanel({ day }: DayDetailPanelProps) {
               <h4
                 className={cn(
                   "text-xs mb-2 text-muted-foreground",
-                  localeCode === "en" && "uppercase tracking-[0.16em]",
+                  localeCode === "en" && "tracking-[0.06em]",
                 )}
               >
                 {t.ui.astroDays}
@@ -216,7 +216,7 @@ export function DayDetailPanel({ day }: DayDetailPanelProps) {
               <h4
                 className={cn(
                   "text-xs mb-2 text-muted-foreground",
-                  localeCode === "en" && "uppercase tracking-[0.16em]",
+                  localeCode === "en" && "tracking-[0.06em]",
                 )}
               >
                 {t.ui.holidays}

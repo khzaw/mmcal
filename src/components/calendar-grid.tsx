@@ -48,7 +48,7 @@ export function CalendarGrid({
             key={wd}
             className={cn(
               "text-center text-[11px] py-2.5 leading-relaxed",
-              "uppercase tracking-[0.14em]",
+              "tracking-[0.08em]",
               i === 0 || i === 6 ? "text-destructive/70" : "text-muted-foreground/70",
             )}
           >

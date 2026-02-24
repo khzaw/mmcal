@@ -89,7 +89,7 @@ export function CalendarHeader({
                 onClick={onToday}
                 className={cn(
                   "h-10 rounded-none border-x border-border/70 px-4 gap-1.5 text-xs",
-                  localeCode === "en" && "uppercase tracking-[0.12em]",
+                  localeCode === "en" && "tracking-[0.06em]",
                 )}
               >
                 <CalendarDays className="h-3.5 w-3.5" />
@@ -159,7 +159,7 @@ export function CalendarHeader({
               value="month"
               className={cn(
                 "text-xs px-3 leading-relaxed",
-                localeCode === "en" && "uppercase tracking-[0.12em]",
+                localeCode === "en" && "tracking-[0.06em]",
               )}
             >
               {t.ui.monthView}
@@ -168,7 +168,7 @@ export function CalendarHeader({
               value="week"
               className={cn(
                 "text-xs px-3 leading-relaxed",
-                localeCode === "en" && "uppercase tracking-[0.12em]",
+                localeCode === "en" && "tracking-[0.06em]",
               )}
             >
               {t.ui.weekView}
@@ -177,7 +177,7 @@ export function CalendarHeader({
               value="year"
               className={cn(
                 "text-xs px-3 leading-relaxed",
-                localeCode === "en" && "uppercase tracking-[0.12em]",
+                localeCode === "en" && "tracking-[0.06em]",
               )}
             >
               {t.ui.yearView}
