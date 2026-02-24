@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { detailSectionStagger, springPresets } from "@/lib/animations"
 import type { CalendarDayInfo } from "@/lib/burmese-calendar"
 import {
@@ -13,6 +14,7 @@ import {
 import { useI18n } from "@/lib/i18n/context"
 import { cn } from "@/lib/utils"
 import { AnimatePresence, motion } from "framer-motion"
+import { CircleHelp } from "lucide-react"
 import { AnimatedMoon } from "./animated-moon"
 
 const badgeInnerStagger = {
@@ -29,6 +31,16 @@ const badgeInnerStagger = {
 interface DayDetailPanelProps {
   day: CalendarDayInfo
 }
+
+type DetailKey =
+  | "myanmarYear"
+  | "sasanaYear"
+  | "yearType"
+  | "moonPhase"
+  | "mahabote"
+  | "nakhat"
+  | "nagahle"
+  | "sabbath"
 
 export function DayDetailPanel({ day }: DayDetailPanelProps) {
   const { t, localeCode } = useI18n()
@@ -70,15 +82,46 @@ export function DayDetailPanel({ day }: DayDetailPanelProps) {
         ? (t.astro["Sabbath Eve"] ?? "Sabbath Eve")
         : "---"
 
-  const detailRows = [
-    { label: t.ui.myanmarYear, value: `${t.formatNumber(myanmar.my)} ${t.ui.me}` },
-    { label: t.ui.sasanaYear, value: `${t.formatNumber(sasanaYear)} ${t.ui.be}` },
-    { label: t.ui.yearType, value: t.yearTypes[myanmar.myt] },
-    { label: t.ui.moonPhase, value: moonPhaseName },
-    { label: t.ui.mahabote, value: mahabote },
-    { label: t.ui.nakhat, value: nakhat },
-    { label: t.ui.nagahle, value: nagahle },
-    { label: t.ui.sabbath, value: sabbathLabel },
+  const explainers: Record<DetailKey, string> =
+    localeCode === "mm"
+      ? {
+          myanmarYear: "မြန်မာသက္ကရာဇ်နှစ်",
+          sasanaYear: "ဗုဒ္ဓသာသနာနှစ်",
+          yearType: "ဝါထပ်ကိန်းအရ နှစ်အမျိုးအစား",
+          moonPhase: "လဆန်း၊ လပြည့်၊ လဆုတ်၊ လကွယ် အခြေအနေ",
+          mahabote: "မွေးနှစ်နှင့် နေ့အလိုက် မဟာဘုတ်ကိန်း",
+          nakhat: "နှစ်အခြေပြု နက္ခတ်အုပ်စု",
+          nagahle: "လအလိုက် နဂါးခေါင်းလှည့်ရာ အရပ်",
+          sabbath: "ဥပုသ်နေ့ သို့မဟုတ် အဖိတ်နေ့",
+        }
+      : {
+          myanmarYear: "Myanmar Era year number.",
+          sasanaYear: "Buddhist Era (Sasana) year number.",
+          yearType: "Common, little watat, or big watat year type.",
+          moonPhase: "Waxing, full moon, waning, or new moon.",
+          mahabote: "Traditional Mahabote classification by year and weekday.",
+          nakhat: "Traditional Nakhat grouping for the Myanmar year.",
+          nagahle: "Directional nagahle indicator by lunar month.",
+          sabbath: "Uposatha day or Sabbath Eve indicator.",
+        }
+
+  const detailRows: Array<{ key: DetailKey; label: string; value: string }> = [
+    {
+      key: "myanmarYear",
+      label: t.ui.myanmarYear,
+      value: `${t.formatNumber(myanmar.my)} ${t.ui.me}`,
+    },
+    {
+      key: "sasanaYear",
+      label: t.ui.sasanaYear,
+      value: `${t.formatNumber(sasanaYear)} ${t.ui.be}`,
+    },
+    { key: "yearType", label: t.ui.yearType, value: t.yearTypes[myanmar.myt] },
+    { key: "moonPhase", label: t.ui.moonPhase, value: moonPhaseName },
+    { key: "mahabote", label: t.ui.mahabote, value: mahabote },
+    { key: "nakhat", label: t.ui.nakhat, value: nakhat },
+    { key: "nagahle", label: t.ui.nagahle, value: nagahle },
+    { key: "sabbath", label: t.ui.sabbath, value: sabbathLabel },
   ]
 
   const astroBadges = [
@@ -158,14 +201,30 @@ export function DayDetailPanel({ day }: DayDetailPanelProps) {
             {detailRows.map((row, idx) => (
               <div key={row.label}>
                 <div className="flex items-center justify-between gap-4 py-2">
-                  <span
-                    className={cn(
-                      "text-xs text-muted-foreground",
-                      localeCode === "en" && "tracking-[0.06em]",
-                    )}
-                  >
-                    {row.label}
-                  </span>
+                  <div className="min-w-0 flex items-center gap-1.5">
+                    <span
+                      className={cn(
+                        "text-xs text-muted-foreground",
+                        localeCode === "en" && "tracking-[0.06em]",
+                      )}
+                    >
+                      {row.label}
+                    </span>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <button
+                          type="button"
+                          className="inline-flex h-4 w-4 items-center justify-center rounded-full text-muted-foreground/70 hover:text-foreground transition-colors"
+                          aria-label={`Explain ${row.label}`}
+                        >
+                          <CircleHelp className="h-3.5 w-3.5" />
+                        </button>
+                      </TooltipTrigger>
+                      <TooltipContent sideOffset={6} className="max-w-56 leading-relaxed">
+                        {explainers[row.key]}
+                      </TooltipContent>
+                    </Tooltip>
+                  </div>
                   <span className="min-w-0 max-w-[58%] break-words text-sm text-foreground text-right">
                     {row.value}
                   </span>
