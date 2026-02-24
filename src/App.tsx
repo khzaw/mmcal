@@ -3,6 +3,7 @@ import { CalendarGrid } from "@/components/calendar-grid"
 import { CalendarHeader } from "@/components/calendar-header"
 import { DayDetailPanel } from "@/components/day-detail-panel"
 import { ThemeProvider } from "@/components/theme-toggle"
+import { TodayWidget } from "@/components/today-widget"
 import { badgeStagger, fadeInUp, fadeInUpTransition } from "@/lib/animations"
 import { I18nProvider, useI18n } from "@/lib/i18n/context"
 import { AnimatePresence, motion } from "framer-motion"
@@ -275,6 +276,8 @@ function CalendarApp() {
               >
                 <Card className="sticky top-4 min-h-[360px] rounded-3xl border-border/70 bg-card/70 backdrop-blur !py-3">
                   <CardContent className="px-4 pt-1 pb-4 md:px-5 md:pt-1.5 md:pb-5">
+                    <TodayWidget day={todayInfo} />
+                    <Separator className="my-3" />
                     {state.selectedDay ? (
                       <DayDetailPanel day={state.selectedDay} />
                     ) : (
