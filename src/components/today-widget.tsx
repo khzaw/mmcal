@@ -54,7 +54,7 @@ export function TodayWidget({ day }: TodayWidgetProps) {
         </p>
         <Badge
           variant="outline"
-          className="h-5 rounded-full px-2 text-[10px] text-muted-foreground border-border/60"
+          className="h-5 rounded-full px-2 text-[10px] text-muted-foreground border-border/65 bg-background/60"
         >
           {t.weekdays[day.weekday]}
         </Badge>
@@ -110,7 +110,8 @@ export function TodayWidget({ day }: TodayWidgetProps) {
               className={cn(
                 "rounded-full px-2 py-0.5 text-[10px] border-border/65 bg-background/60",
                 item.tone === "holiday" && "border-destructive/80 bg-destructive/85 text-white",
-                item.tone === "warning" && "border-amber-500/45 bg-amber-500/16 text-amber-200",
+                item.tone === "warning" &&
+                  "text-destructive border-destructive/40 bg-destructive/15",
                 item.tone === "good" && "border-chart-2/45 bg-chart-2/14 text-chart-2",
                 item.tone === "neutral" && "text-muted-foreground",
               )}

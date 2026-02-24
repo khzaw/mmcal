@@ -30,6 +30,7 @@ const badgeInnerStagger = {
 
 interface DayDetailPanelProps {
   day: CalendarDayInfo
+  hideHero?: boolean
 }
 
 type DetailKey =
@@ -42,7 +43,7 @@ type DetailKey =
   | "nagahle"
   | "sabbath"
 
-export function DayDetailPanel({ day }: DayDetailPanelProps) {
+export function DayDetailPanel({ day, hideHero = false }: DayDetailPanelProps) {
   const { t, localeCode } = useI18n()
   const { myanmar, gregorian, moonPhase, fortnightDay, weekday } = day
   const sasanaYear = my2sy(myanmar.my)
@@ -146,53 +147,64 @@ export function DayDetailPanel({ day }: DayDetailPanelProps) {
           animate="visible"
           className="space-y-4"
         >
-          <motion.div
-            variants={detailSectionStagger.item}
-            className="rounded-2xl bg-background/45 px-4 pt-2.5 pb-4 md:px-5 md:pt-3"
-          >
-            <div className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-4">
-              <AnimatedMoon phase={moonPhase} fortnightDay={fortnightDay} size={88} />
-              <div className="min-w-0">
-                <p
-                  className={cn(
-                    "text-[10px] md:text-[11px] text-muted-foreground/65",
-                    localeCode === "en" && "tracking-[0.06em]",
-                  )}
-                >
-                  {t.weekdays[weekday]}
-                </p>
-                <h3
-                  className={cn(
-                    "mt-1 min-w-0 text-foreground tracking-tight",
-                    localeCode === "mm" ? "leading-[1.3]" : "leading-[1.08]",
-                  )}
-                >
-                  <span className="block min-w-0 truncate whitespace-nowrap text-[clamp(1.3rem,2.9vw,1.8rem)] font-semibold">
-                    {gregorianMonthLabel} {t.formatNumber(gregorian.day)}
-                    {localeCode === "en" && ","}
-                  </span>
-                  <span className="mt-1 block whitespace-nowrap text-[clamp(0.9rem,1.8vw,1.15rem)] font-normal tabular-nums text-muted-foreground/48">
-                    {t.formatNumber(gregorian.year)}
-                  </span>
-                </h3>
-                <p
-                  className={cn(
-                    "mt-2 text-[clamp(0.95rem,1.9vw,1.05rem)]",
-                    localeCode === "mm"
-                      ? "w-full whitespace-normal break-words leading-[1.95]"
-                      : "w-full overflow-hidden text-ellipsis whitespace-nowrap leading-relaxed",
-                    moonPhase === 1
-                      ? "text-[var(--moon-full-text)]/85"
-                      : moonPhase === 3
-                        ? "text-[var(--moon-new-text)]/85"
-                        : "text-muted-foreground/90",
-                  )}
-                >
-                  {monthName} {moonPhaseName} {t.formatNumber(fortnightDay)}
-                </p>
-              </div>
-            </div>
-          </motion.div>
+          <AnimatePresence initial={false}>
+            {!hideHero && (
+              <motion.div
+                key="detail-hero"
+                variants={detailSectionStagger.item}
+                initial={{ opacity: 0, y: -10, scale: 0.985, height: 0 }}
+                animate={{ opacity: 1, y: 0, scale: 1, height: "auto" }}
+                exit={{ opacity: 0, y: -10, scale: 0.985, height: 0 }}
+                transition={{ duration: 0.26, ease: "easeInOut" }}
+                className="overflow-hidden"
+              >
+                <div className="rounded-2xl bg-background/45 px-4 pt-2.5 pb-4 md:px-5 md:pt-3">
+                  <div className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-4">
+                    <AnimatedMoon phase={moonPhase} fortnightDay={fortnightDay} size={88} />
+                    <div className="min-w-0">
+                      <p
+                        className={cn(
+                          "text-[10px] md:text-[11px] text-muted-foreground/65",
+                          localeCode === "en" && "tracking-[0.06em]",
+                        )}
+                      >
+                        {t.weekdays[weekday]}
+                      </p>
+                      <h3
+                        className={cn(
+                          "mt-1 min-w-0 text-foreground tracking-tight",
+                          localeCode === "mm" ? "leading-[1.3]" : "leading-[1.08]",
+                        )}
+                      >
+                        <span className="block min-w-0 truncate whitespace-nowrap text-[clamp(1.3rem,2.9vw,1.8rem)] font-semibold">
+                          {gregorianMonthLabel} {t.formatNumber(gregorian.day)}
+                          {localeCode === "en" && ","}
+                        </span>
+                        <span className="mt-1 block whitespace-nowrap text-[clamp(0.9rem,1.8vw,1.15rem)] font-normal tabular-nums text-muted-foreground/48">
+                          {t.formatNumber(gregorian.year)}
+                        </span>
+                      </h3>
+                      <p
+                        className={cn(
+                          "mt-2 text-[clamp(0.95rem,1.9vw,1.05rem)]",
+                          localeCode === "mm"
+                            ? "w-full whitespace-normal break-words leading-[1.95]"
+                            : "w-full overflow-hidden text-ellipsis whitespace-nowrap leading-relaxed",
+                          moonPhase === 1
+                            ? "text-[var(--moon-full-text)]/85"
+                            : moonPhase === 3
+                              ? "text-[var(--moon-new-text)]/85"
+                              : "text-muted-foreground/90",
+                        )}
+                      >
+                        {monthName} {moonPhaseName} {t.formatNumber(fortnightDay)}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           <motion.div
             variants={detailSectionStagger.item}

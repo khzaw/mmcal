@@ -32,6 +32,7 @@ import {
   w2j,
 } from "@/lib/burmese-calendar"
 import { readURLState, writeURLState } from "@/lib/url-state"
+import { isSwipeNavigationEnabled, shouldHideDetailHero } from "@/lib/view-interactions"
 
 function CalendarApp() {
   const { state, dispatch, todayJdn, todayInfo } = useCalendarState()
@@ -103,7 +104,7 @@ function CalendarApp() {
   const myYearInfo = cal_my(midMonthMm.my)
   const mmMonthName = t.myanmarMonths[midMonthMm.mm] ?? getMonthName(midMonthMm.mm, midMonthMm.myt)
 
-  // Mobile detection for week-view swipe axis
+  // Mobile detection for touch swipe support
   const [isMobile, setIsMobile] = useState(() => window.matchMedia("(max-width: 767px)").matches)
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 767px)")
@@ -117,7 +118,7 @@ function CalendarApp() {
     onPrev: handlePrev,
     onNext: handleNext,
     axis: "x",
-    enabled: state.view !== "year" && !(state.view === "week" && isMobile),
+    enabled: isSwipeNavigationEnabled(state.view, isMobile),
   })
 
   // Check if current view has any sabbath days
@@ -279,7 +280,10 @@ function CalendarApp() {
                     <TodayWidget day={todayInfo} />
                     <Separator className="my-3" />
                     {state.selectedDay ? (
-                      <DayDetailPanel day={state.selectedDay} />
+                      <DayDetailPanel
+                        day={state.selectedDay}
+                        hideHero={shouldHideDetailHero(state.selectedDay?.jdn ?? null, todayJdn)}
+                      />
                     ) : (
                       <p className="text-sm text-muted-foreground text-center py-8">
                         {t.ui.selectDay}
