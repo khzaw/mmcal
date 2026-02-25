@@ -1,4 +1,14 @@
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 import { Separator } from "@/components/ui/separator"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { detailSectionStagger, springPresets } from "@/lib/animations"
@@ -12,9 +22,16 @@ import {
   my2sy,
 } from "@/lib/burmese-calendar"
 import { useI18n } from "@/lib/i18n/context"
+import {
+  buildShareCardSvg,
+  buildShareText,
+  downloadShareCardPng,
+  getShareFilename,
+} from "@/lib/share-card"
 import { cn } from "@/lib/utils"
 import { AnimatePresence, motion } from "framer-motion"
-import { CircleHelp } from "lucide-react"
+import { Check, CircleHelp, Copy, Download, Share2 } from "lucide-react"
+import { useCallback, useMemo, useState } from "react"
 import { AnimatedMoon } from "./animated-moon"
 
 const badgeInnerStagger = {
@@ -45,6 +62,9 @@ type DetailKey =
 
 export function DayDetailPanel({ day, hideHero = false }: DayDetailPanelProps) {
   const { t, localeCode } = useI18n()
+  const [isShareOpen, setIsShareOpen] = useState(false)
+  const [isDownloading, setIsDownloading] = useState(false)
+  const [copied, setCopied] = useState(false)
   const { myanmar, gregorian, moonPhase, fortnightDay, weekday } = day
   const sasanaYear = my2sy(myanmar.my)
   const mahabote = t.mahabote[cal_mahabote(myanmar.my, weekday) % 7] ?? ""
@@ -82,6 +102,48 @@ export function DayDetailPanel({ day, hideHero = false }: DayDetailPanelProps) {
       : day.sabbath === 2
         ? (t.astro["Sabbath Eve"] ?? "Sabbath Eve")
         : "---"
+
+  const shareSvg = useMemo(() => buildShareCardSvg(day, t, localeCode), [day, t, localeCode])
+  const shareText = useMemo(() => buildShareText(day, t, localeCode), [day, t, localeCode])
+  const sharePreview = useMemo(
+    () => `data:image/svg+xml;charset=utf-8,${encodeURIComponent(shareSvg)}`,
+    [shareSvg],
+  )
+  const canNativeShare = typeof navigator !== "undefined" && typeof navigator.share === "function"
+
+  const handleDownloadCard = useCallback(async () => {
+    setIsDownloading(true)
+    try {
+      await downloadShareCardPng(shareSvg, getShareFilename(day))
+    } catch {
+      // Ignore export failures (for unsupported browsers)
+    } finally {
+      setIsDownloading(false)
+    }
+  }, [day, shareSvg])
+
+  const handleCopyText = useCallback(async () => {
+    if (typeof navigator === "undefined" || !navigator.clipboard) return
+    try {
+      await navigator.clipboard.writeText(shareText)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 1200)
+    } catch {
+      // Ignore clipboard failures
+    }
+  }, [shareText])
+
+  const handleNativeShare = useCallback(async () => {
+    if (!canNativeShare) return
+    try {
+      await navigator.share({
+        title: t.ui.appTitle,
+        text: shareText,
+      })
+    } catch {
+      // Ignore user cancellation
+    }
+  }, [canNativeShare, shareText, t.ui.appTitle])
 
   const explainers: Record<DetailKey, string> =
     localeCode === "mm"
@@ -211,6 +273,90 @@ export function DayDetailPanel({ day, hideHero = false }: DayDetailPanelProps) {
               </motion.div>
             )}
           </AnimatePresence>
+
+          <motion.div
+            variants={detailSectionStagger.item}
+            className="print:hidden flex justify-end"
+          >
+            <Dialog open={isShareOpen} onOpenChange={setIsShareOpen}>
+              <DialogTrigger asChild>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className={cn(
+                    "rounded-full border-border/70 bg-background/45 hover:bg-accent/70 gap-1.5",
+                    localeCode === "en" && "tracking-[0.04em]",
+                  )}
+                >
+                  <Share2 className="h-3.5 w-3.5" />
+                  {t.ui.shareCard ?? "Share Card"}
+                </Button>
+              </DialogTrigger>
+
+              <DialogContent className="sm:max-w-3xl rounded-2xl border-border/70 bg-card/90 backdrop-blur-md">
+                <DialogHeader>
+                  <DialogTitle>{t.ui.shareCard ?? "Share Card"}</DialogTitle>
+                  <DialogDescription>
+                    {t.ui.shareDescription ?? "Create a polished card for social sharing."}
+                  </DialogDescription>
+                </DialogHeader>
+
+                <div className="rounded-xl border border-border/60 bg-background/70 p-2">
+                  <img
+                    src={sharePreview}
+                    alt={t.ui.shareCard ?? "Share Card Preview"}
+                    className="w-full rounded-lg border border-border/45"
+                  />
+                </div>
+
+                <DialogFooter className="sm:justify-between">
+                  <p className="text-xs text-muted-foreground whitespace-pre-line">{shareText}</p>
+                  <div className="flex flex-wrap justify-end gap-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={handleCopyText}
+                      className="rounded-full"
+                    >
+                      {copied ? (
+                        <Check className="h-3.5 w-3.5" />
+                      ) : (
+                        <Copy className="h-3.5 w-3.5" />
+                      )}
+                      {copied ? (t.ui.copied ?? "Copied") : (t.ui.copyText ?? "Copy Text")}
+                    </Button>
+
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={handleDownloadCard}
+                      disabled={isDownloading}
+                      className="rounded-full"
+                    >
+                      <Download className="h-3.5 w-3.5" />
+                      {isDownloading ? "..." : (t.ui.downloadImage ?? "Download PNG")}
+                    </Button>
+
+                    {canNativeShare && (
+                      <Button
+                        type="button"
+                        variant="default"
+                        size="sm"
+                        onClick={handleNativeShare}
+                        className="rounded-full"
+                      >
+                        <Share2 className="h-3.5 w-3.5" />
+                        {t.ui.share ?? "Share"}
+                      </Button>
+                    )}
+                  </div>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </motion.div>
 
           <motion.div
             variants={detailSectionStagger.item}
