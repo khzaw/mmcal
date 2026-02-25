@@ -48,7 +48,7 @@ export function CalendarGrid({
           <div
             key={wd}
             className={cn(
-              "text-center text-[11px] py-2.5 leading-relaxed",
+              "text-left text-[11px] py-2.5 pl-1.5 md:pl-2 leading-relaxed",
               "tracking-[0.08em]",
               i === 0 || i === 6 ? "text-destructive/70" : "text-muted-foreground/70",
             )}

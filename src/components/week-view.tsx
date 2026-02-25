@@ -394,13 +394,12 @@ function InfiniteWeekList({
         const allHolidays = [...d.holidays, ...d.holidays2]
         const yatyaza = cal_yatyaza(d.myanmar.mm, d.weekday)
         const pyathada = cal_pyathada(d.myanmar.mm, d.weekday)
-
-        // Show a sticky month header when the month changes
         const prevDay = i > 0 ? days[i - 1] : null
         const showMonthHeader =
-          i === 0 || (prevDay && prevDay.gregorian.month !== d.gregorian.month)
-
-        // Thin week separator on Sundays (unless there's already a month header)
+          i === 0 ||
+          !prevDay ||
+          prevDay.gregorian.month !== d.gregorian.month ||
+          prevDay.gregorian.year !== d.gregorian.year
         const showWeekSep = isSunday && i > 0 && !showMonthHeader
 
         return (
