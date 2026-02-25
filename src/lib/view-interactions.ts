@@ -4,6 +4,14 @@ export function isSwipeNavigationEnabled(view: ViewMode, isMobile: boolean): boo
   return isMobile && view === "month"
 }
 
-export function shouldHideDetailHero(selectedJdn: number | null, todayJdn: number): boolean {
-  return selectedJdn === todayJdn
+export function shouldShowTodayWidget(isMobile: boolean): boolean {
+  return !isMobile
+}
+
+export function shouldHideDetailHero(
+  selectedJdn: number | null,
+  todayJdn: number,
+  isMobile: boolean,
+): boolean {
+  return !isMobile && selectedJdn === todayJdn
 }

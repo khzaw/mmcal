@@ -32,7 +32,11 @@ import {
   w2j,
 } from "@/lib/burmese-calendar"
 import { readURLState, writeURLState } from "@/lib/url-state"
-import { isSwipeNavigationEnabled, shouldHideDetailHero } from "@/lib/view-interactions"
+import {
+  isSwipeNavigationEnabled,
+  shouldHideDetailHero,
+  shouldShowTodayWidget,
+} from "@/lib/view-interactions"
 
 function CalendarApp() {
   const { state, dispatch, todayJdn, todayInfo } = useCalendarState()
@@ -120,6 +124,7 @@ function CalendarApp() {
     axis: "x",
     enabled: isSwipeNavigationEnabled(state.view, isMobile),
   })
+  const showTodayWidget = shouldShowTodayWidget(isMobile)
 
   // Check if current view has any sabbath days
   const hasSabbath = useMemo(() => {
@@ -277,12 +282,20 @@ function CalendarApp() {
               >
                 <Card className="sticky top-4 min-h-[360px] rounded-3xl border-border/70 bg-card/70 backdrop-blur !py-3">
                   <CardContent className="px-4 pt-1 pb-4 md:px-5 md:pt-1.5 md:pb-5">
-                    <TodayWidget day={todayInfo} />
-                    <Separator className="my-3" />
+                    {showTodayWidget && (
+                      <>
+                        <TodayWidget day={todayInfo} />
+                        <Separator className="my-3" />
+                      </>
+                    )}
                     {state.selectedDay ? (
                       <DayDetailPanel
                         day={state.selectedDay}
-                        hideHero={shouldHideDetailHero(state.selectedDay?.jdn ?? null, todayJdn)}
+                        hideHero={shouldHideDetailHero(
+                          state.selectedDay?.jdn ?? null,
+                          todayJdn,
+                          isMobile,
+                        )}
                       />
                     ) : (
                       <p className="text-sm text-muted-foreground text-center py-8">
