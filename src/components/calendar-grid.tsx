@@ -36,9 +36,12 @@ export function CalendarGrid({
   const days = useMemo(() => getGregorianMonthDays(year, month), [year, month])
 
   const firstDayWeekday = days[0]?.weekday ?? 0
-  const blanks = displayColumn(firstDayWeekday)
-  const cells: (CalendarDayInfo | null)[] = [...Array(blanks).fill(null), ...days]
-  while (cells.length % 7 !== 0) cells.push(null)
+  const cells = useMemo<(CalendarDayInfo | null)[]>(() => {
+    const blanks = displayColumn(firstDayWeekday)
+    const result: (CalendarDayInfo | null)[] = [...Array(blanks).fill(null), ...days]
+    while (result.length % 7 !== 0) result.push(null)
+    return result
+  }, [days, firstDayWeekday])
 
   return (
     <div className="w-full">
@@ -69,8 +72,22 @@ export function CalendarGrid({
           animate={{ x: 0, opacity: 1 }}
           exit={{ x: direction > 0 ? -80 : 80, opacity: 0 }}
           transition={{ duration: 0.2, ease: "easeInOut" }}
-          className="grid grid-cols-7 gap-px rounded-2xl border border-border/70 bg-border/15 p-px"
+          className="relative grid grid-cols-7 gap-px rounded-2xl border border-border/70 bg-border/15 p-px overflow-hidden"
         >
+          <motion.div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0"
+            initial={{ x: direction > 0 ? -18 : direction < 0 ? 18 : 0, opacity: 0.1 }}
+            animate={{ x: 0, opacity: 0.24 }}
+            exit={{ x: direction > 0 ? 18 : -18, opacity: 0.08 }}
+            transition={{ duration: 0.28, ease: "easeOut" }}
+            style={{
+              backgroundImage:
+                "radial-gradient(circle at 18% 22%, rgba(255,255,255,0.11) 0.8px, transparent 1.6px), radial-gradient(circle at 72% 68%, rgba(255,255,255,0.08) 0.7px, transparent 1.4px), radial-gradient(circle at 44% 48%, rgba(255,255,255,0.06) 0.6px, transparent 1.2px)",
+              backgroundSize: "180px 120px, 220px 160px, 260px 180px",
+            }}
+          />
+
           {cells.map((day, index) => {
             if (!day) {
               return (

@@ -17,12 +17,17 @@ Myanmar calendar with moon phases, traditional holidays, and astrological days �
 
 ## Screenshots
 
-![Month view](.github/screenshots/month.jpeg)
-![Month view — dark](.github/screenshots/month-dark.jpeg)
-![Month view — English](.github/screenshots/month-en.jpeg)
-![Week view](.github/screenshots/week.jpeg)
-![Week view — dark](.github/screenshots/week-dark.jpeg)
-![Year view — dark, English](.github/screenshots/year-dark-en.jpeg)
+### Myanmar (MM)
+
+![Month view — Myanmar (light)](.github/screenshots/month-mm-light.jpeg)
+![Month view — Myanmar (dark)](.github/screenshots/month-mm-dark.jpeg)
+![Week view — Myanmar (light)](.github/screenshots/week-mm-light.jpeg)
+![Week view — Myanmar (dark)](.github/screenshots/week-mm-dark.jpeg)
+![Year view — Myanmar (light)](.github/screenshots/year-mm-light.jpeg)
+
+### English (EN)
+
+![Month view — English (dark)](.github/screenshots/month-en-dark.jpeg)
 
 ---
 

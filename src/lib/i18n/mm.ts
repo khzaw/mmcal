@@ -121,6 +121,7 @@ export const mm: Locale = {
     downloadImage: "PNG ဒေါင်းလုဒ်",
     share: "မျှဝေရန်",
     shareDescription: "လူမှုကွန်ရက်တွင် မျှဝေရန် ကဒ်ဖန်တီးပါ",
+    moonLegend: "လ အညွှန်း",
   },
   formatNumber: toBurmeseNumerals,
 }

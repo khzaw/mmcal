@@ -34,6 +34,7 @@ export function WeekView({
   scrollKey = 0,
 }: WeekViewProps) {
   const { t, localeCode } = useI18n()
+  const hasMountedWeekGridRef = useRef(false)
 
   const weekDays = useMemo(() => {
     const centerJdn = Math.round(w2j(year, month, day))
@@ -46,6 +47,10 @@ export function WeekView({
     }
     return days
   }, [year, month, day])
+
+  useEffect(() => {
+    hasMountedWeekGridRef.current = true
+  }, [])
 
   if (vertical) {
     return (
@@ -66,10 +71,14 @@ export function WeekView({
       <AnimatePresence mode="popLayout" initial={false}>
         <motion.div
           key={weekDays[0]?.jdn}
-          initial={{
-            x: direction > 0 ? 80 : direction < 0 ? -80 : 0,
-            opacity: 0,
-          }}
+          initial={
+            hasMountedWeekGridRef.current
+              ? {
+                  x: direction > 0 ? 80 : direction < 0 ? -80 : 0,
+                  opacity: 0,
+                }
+              : false
+          }
           animate={{ x: 0, opacity: 1 }}
           exit={{ x: direction > 0 ? -80 : 80, opacity: 0 }}
           transition={{ duration: 0.2, ease: "easeInOut" }}

@@ -76,6 +76,7 @@ export const en: Locale = {
     downloadImage: "Download PNG",
     share: "Share",
     shareDescription: "Create a polished card for social sharing.",
+    moonLegend: "Moon Legend",
   },
   formatNumber: String,
 }

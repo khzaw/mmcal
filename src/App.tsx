@@ -2,14 +2,15 @@ import { AppHeader } from "@/components/app-header"
 import { CalendarGrid } from "@/components/calendar-grid"
 import { CalendarHeader } from "@/components/calendar-header"
 import { DayDetailPanel } from "@/components/day-detail-panel"
+import { MoonPhaseIcon } from "@/components/moon-phase-icon"
 import { ThemeProvider } from "@/components/theme-toggle"
 import { TodayWidget } from "@/components/today-widget"
+import { WeekView } from "@/components/week-view"
 import { badgeStagger, fadeInUp, fadeInUpTransition } from "@/lib/animations"
 import { I18nProvider, useI18n } from "@/lib/i18n/context"
 import { AnimatePresence, motion } from "framer-motion"
-import { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { Suspense, lazy, useCallback, useEffect, useRef, useState } from "react"
 
-const WeekView = lazy(() => import("@/components/week-view").then((m) => ({ default: m.WeekView })))
 const YearView = lazy(() => import("@/components/year-view").then((m) => ({ default: m.YearView })))
 const CommandPalette = lazy(() =>
   import("@/components/command-palette").then((m) => ({
@@ -22,15 +23,7 @@ import { Separator } from "@/components/ui/separator"
 import { useCalendarState } from "@/hooks/use-calendar-state"
 import { useKeyboardNav } from "@/hooks/use-keyboard-nav"
 import { useSwipeNav } from "@/hooks/use-swipe-nav"
-import {
-  cal_my,
-  getDayInfo,
-  getGregorianMonthDays,
-  getMonthName,
-  j2m,
-  my2sy,
-  w2j,
-} from "@/lib/burmese-calendar"
+import { cal_my, getMonthName, j2m, my2sy, w2j } from "@/lib/burmese-calendar"
 import { readURLState, writeURLState } from "@/lib/url-state"
 import {
   isSwipeNavigationEnabled,
@@ -129,22 +122,13 @@ function CalendarApp() {
     enabled: isSwipeNavigationEnabled(state.view, isMobile),
   })
   const showTodayWidget = shouldShowTodayWidget(isMobile)
-
-  // Check if current view has any sabbath days
-  const hasSabbath = useMemo(() => {
-    if (state.view === "year") return false
-    if (state.view === "month") {
-      return getGregorianMonthDays(state.year, state.month).some((d) => d.sabbath === 1)
-    }
-    // week view
-    const centerJdn = Math.round(w2j(state.year, state.month, state.day))
-    const info = getDayInfo(centerJdn)
-    const startJdn = centerJdn - ((info.weekday + 6) % 7)
-    for (let i = 0; i < 7; i++) {
-      if (getDayInfo(startJdn + i).sabbath === 1) return true
-    }
-    return false
-  }, [state.view, state.year, state.month, state.day])
+  const legendDay = state.selectedDay ?? todayInfo
+  const fullMoonTone =
+    (legendDay.holidays.length > 0 || legendDay.holidays2.length > 0) &&
+    legendDay.moonPhase === 1 &&
+    legendDay.jdn === state.selectedJdn
+      ? "holiday"
+      : "neutral"
 
   return (
     <main className="min-h-screen bg-background flex flex-col">
@@ -201,78 +185,56 @@ function CalendarApp() {
 
         <div className="mt-5 print:mt-3 flex flex-col lg:flex-row gap-5 print:gap-3 lg:items-start print:items-start">
           {/* Calendar view — stable min-h prevents footer jumping between 4/5/6 row months */}
-          <div ref={swipeRef} className="flex-1 min-w-0 md:min-h-[640px] print:min-h-0">
-            <AnimatePresence mode="wait">
-              {state.view === "month" && (
-                <motion.div
-                  key="month"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.12 }}
-                >
-                  <CalendarGrid
+          <div ref={swipeRef} className="flex-1 min-w-0 md:min-h-[640px] print:min-h-0 relative">
+            {state.view === "month" && (
+              <div className="relative z-[2]">
+                <CalendarGrid
+                  year={state.year}
+                  month={state.month}
+                  selectedJdn={state.selectedJdn}
+                  onSelectDay={(day) => dispatch({ type: "SELECT_DAY", day })}
+                  todayJdn={todayJdn}
+                  direction={directionRef.current}
+                />
+              </div>
+            )}
+            {state.view === "week" && (
+              <div className="relative z-[2]">
+                <WeekView
+                  year={state.year}
+                  month={state.month}
+                  day={state.day}
+                  selectedJdn={state.selectedJdn}
+                  onSelectDay={(day) => dispatch({ type: "SELECT_DAY", day })}
+                  todayJdn={todayJdn}
+                  direction={directionRef.current}
+                  vertical={isMobile}
+                  scrollKey={navKey}
+                />
+              </div>
+            )}
+            {state.view === "year" && (
+              <div className="relative z-[2]">
+                <Suspense fallback={null}>
+                  <YearView
                     year={state.year}
-                    month={state.month}
                     selectedJdn={state.selectedJdn}
-                    onSelectDay={(day) => dispatch({ type: "SELECT_DAY", day })}
                     todayJdn={todayJdn}
-                    direction={directionRef.current}
+                    onSelectDay={(day) => dispatch({ type: "SELECT_DAY", day })}
+                    onGoToMonth={(m) => {
+                      dispatch({
+                        type: "SET_MONTH",
+                        month: m,
+                      })
+                      dispatch({
+                        type: "SET_VIEW",
+                        view: "month",
+                      })
+                    }}
                   />
-                </motion.div>
-              )}
-              {state.view === "week" && (
-                <motion.div
-                  key="week"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.12 }}
-                >
-                  <Suspense fallback={null}>
-                    <WeekView
-                      year={state.year}
-                      month={state.month}
-                      day={state.day}
-                      selectedJdn={state.selectedJdn}
-                      onSelectDay={(day) => dispatch({ type: "SELECT_DAY", day })}
-                      todayJdn={todayJdn}
-                      direction={directionRef.current}
-                      vertical={isMobile}
-                      scrollKey={navKey}
-                    />
-                  </Suspense>
-                </motion.div>
-              )}
-              {state.view === "year" && (
-                <motion.div
-                  key="year"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.12 }}
-                >
-                  <Suspense fallback={null}>
-                    <YearView
-                      year={state.year}
-                      selectedJdn={state.selectedJdn}
-                      todayJdn={todayJdn}
-                      onSelectDay={(day) => dispatch({ type: "SELECT_DAY", day })}
-                      onGoToMonth={(m) => {
-                        dispatch({
-                          type: "SET_MONTH",
-                          month: m,
-                        })
-                        dispatch({
-                          type: "SET_VIEW",
-                          view: "month",
-                        })
-                      }}
-                    />
-                  </Suspense>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                </Suspense>
+              </div>
+            )}
           </div>
 
           {/* Day detail sidebar */}
@@ -316,13 +278,57 @@ function CalendarApp() {
           </AnimatePresence>
         </div>
 
-        {/* Sabbath legend — only when visible days have sabbath */}
-        {hasSabbath && (
+        {/* Moon legend */}
+        {state.view !== "year" && (
           <div className="mt-auto pt-6 pb-6">
             <Separator className="mb-4" />
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              <span className="w-2 h-2 rounded-full bg-destructive inline-block" />
-              {t.astro.Sabbath ?? "Sabbath"}
+            <p className="mb-2 text-[11px] text-muted-foreground/75">
+              {t.ui.moonLegend ?? "Moon Legend"}
+            </p>
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-muted-foreground">
+              {[0, 1, 2, 3].map((phase) => {
+                const isActive = legendDay.moonPhase === phase
+                return (
+                  <motion.div
+                    key={phase}
+                    className="inline-flex items-center gap-1.5"
+                    animate={{
+                      opacity: isActive ? 1 : 0.58,
+                      scale: isActive ? 1.06 : 1,
+                      y: isActive ? -1 : 0,
+                    }}
+                    transition={{ type: "spring", stiffness: 360, damping: 28, mass: 0.55 }}
+                  >
+                    <MoonPhaseIcon
+                      phase={phase}
+                      size={12}
+                      fullMoonTone={phase === 1 ? fullMoonTone : "neutral"}
+                    />
+                    <span>{t.moonPhases[phase]}</span>
+                  </motion.div>
+                )
+              })}
+              <motion.div
+                className="inline-flex items-center gap-1.5"
+                animate={{
+                  opacity: legendDay.sabbath === 1 ? 1 : 0.58,
+                  scale: legendDay.sabbath === 1 ? 1.06 : 1,
+                  y: legendDay.sabbath === 1 ? -1 : 0,
+                }}
+                transition={{ type: "spring", stiffness: 360, damping: 28, mass: 0.55 }}
+              >
+                <motion.span
+                  className="w-2 h-2 rounded-full bg-destructive inline-block"
+                  animate={{
+                    boxShadow:
+                      legendDay.sabbath === 1
+                        ? "0 0 0 4px rgba(239,68,68,0.16)"
+                        : "0 0 0 0 rgba(239,68,68,0)",
+                  }}
+                  transition={{ duration: 0.28, ease: "easeOut" }}
+                />
+                {t.astro.Sabbath ?? "Sabbath"}
+              </motion.div>
             </div>
           </div>
         )}
