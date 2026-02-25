@@ -17,15 +17,11 @@ Myanmar calendar with moon phases, traditional holidays, and astrological days �
 
 ## Screenshots
 
-### Myanmar (MM)
-
 ![Month view — Myanmar (light)](.github/screenshots/month-mm-light.jpeg)
 ![Month view — Myanmar (dark)](.github/screenshots/month-mm-dark.jpeg)
 ![Week view — Myanmar (light)](.github/screenshots/week-mm-light.jpeg)
 ![Week view — Myanmar (dark)](.github/screenshots/week-mm-dark.jpeg)
 ![Year view — Myanmar (light)](.github/screenshots/year-mm-light.jpeg)
-
-### English (EN)
 
 ![Month view — English (dark)](.github/screenshots/month-en-dark.jpeg)
 
