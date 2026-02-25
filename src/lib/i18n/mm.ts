@@ -1,5 +1,5 @@
-import { toBurmeseNumerals } from "./numerals";
-import type { Locale } from "./types";
+import { toBurmeseNumerals } from "./numerals"
+import type { Locale } from "./types"
 
 export const mm: Locale = {
   code: "mm",
@@ -35,24 +35,8 @@ export const mm: Locale = {
     13: "နှောင်းတန်ခူး",
     14: "နှောင်းကဆုန်",
   },
-  weekdays: [
-    "စနေ",
-    "တနင်္ဂနွေ",
-    "တနင်္လာ",
-    "အင်္ဂါ",
-    "ဗုဒ္ဓဟူး",
-    "ကြာသပတေး",
-    "သောကြာ",
-  ],
-  weekdaysShort: [
-    "စနေ",
-    "တနင်္ဂနွေ",
-    "တနင်္လာ",
-    "အင်္ဂါ",
-    "ဗုဒ္ဓဟူး",
-    "ကြာသပတေး",
-    "သောကြာ",
-  ],
+  weekdays: ["စနေ", "တနင်္ဂနွေ", "တနင်္လာ", "အင်္ဂါ", "ဗုဒ္ဓဟူး", "ကြာသပတေး", "သောကြာ"],
+  weekdaysShort: ["စနေ", "တနင်္ဂနွေ", "တနင်္လာ", "အင်္ဂါ", "ဗုဒ္ဓဟူး", "ကြာသပတေး", "သောကြာ"],
   moonPhases: ["လဆန်း", "လပြည့်", "လဆုတ်", "လကွယ်"],
   yearTypes: ["ပုံမှန်", "ဝါငယ်တိတ်နှစ်", "ဝါကြီးတိတ်နှစ်"],
   mahabote: ["ဘင်္ဂ", "အထွန်း", "ရာဇ", "အဓိပတိ", "မရဏ", "သိုက်", "ပုတိ"],
@@ -128,6 +112,15 @@ export const mm: Locale = {
     actions: "လုပ်ဆောင်ချက်များ",
     views: "မြင်ကွင်း",
     noResults: "ရလဒ်မတွေ့ပါ",
+    calendarGrid: "ပြက္ခဒိန်",
+    heatmapView: "အပူမြေပုံ",
+    print: "ပုံနှိပ်",
+    shareCard: "မျှဝေကဒ်",
+    copyText: "စာသားကူးယူ",
+    copied: "ကူးယူပြီး",
+    downloadImage: "PNG ဒေါင်းလုဒ်",
+    share: "မျှဝေရန်",
+    shareDescription: "လူမှုကွန်ရက်တွင် မျှဝေရန် ကဒ်ဖန်တီးပါ",
   },
   formatNumber: toBurmeseNumerals,
-};
+}

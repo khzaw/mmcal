@@ -1,4 +1,4 @@
-import type { Locale } from "./types";
+import type { Locale } from "./types"
 
 export const en: Locale = {
   code: "en",
@@ -34,15 +34,7 @@ export const en: Locale = {
     13: "Late Tagu",
     14: "Late Kason",
   },
-  weekdays: [
-    "Saturday",
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-  ],
+  weekdays: ["Saturday", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
   weekdaysShort: ["Sat", "Sun", "Mon", "Tue", "Wed", "Thu", "Fri"],
   moonPhases: ["Waxing", "Full Moon", "Waning", "New Moon"],
   yearTypes: ["Common", "Little Watat", "Big Watat"],
@@ -75,6 +67,15 @@ export const en: Locale = {
     actions: "Actions",
     views: "Views",
     noResults: "No results found.",
+    calendarGrid: "Calendar",
+    heatmapView: "Heatmap",
+    print: "Print",
+    shareCard: "Share Card",
+    copyText: "Copy Text",
+    copied: "Copied",
+    downloadImage: "Download PNG",
+    share: "Share",
+    shareDescription: "Create a polished card for social sharing.",
   },
   formatNumber: String,
-};
+}
