@@ -141,3 +141,41 @@ html[lang="my"] body {
     @apply h-px w-full bg-gradient-to-r from-transparent via-border/55 to-transparent;
   }
 }
+
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 11mm;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+    color: #111 !important;
+  }
+
+  .dark body {
+    background-image: none !important;
+  }
+
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  [data-slot="tabs-list"],
+  [data-slot="tabs-trigger"],
+  [data-slot="dialog-overlay"],
+  [data-slot="dialog-content"] {
+    box-shadow: none !important;
+  }
+
+  .divider-gradient {
+    background: linear-gradient(
+      90deg,
+      rgb(113 113 122 / 0),
+      rgb(113 113 122 / 0.65),
+      rgb(113 113 122 / 0)
+    ) !important;
+  }
+}

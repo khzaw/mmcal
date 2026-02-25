@@ -12,7 +12,7 @@ import { springPresets } from "@/lib/animations"
 import { useI18n } from "@/lib/i18n/context"
 import { cn } from "@/lib/utils"
 import { AnimatePresence, motion } from "framer-motion"
-import { CalendarDays, ChevronLeft, ChevronRight, Search } from "lucide-react"
+import { CalendarDays, ChevronLeft, ChevronRight, Printer, Search } from "lucide-react"
 
 interface CalendarHeaderProps {
   year: number
@@ -25,6 +25,7 @@ interface CalendarHeaderProps {
   onMonthChange: (month: number) => void
   onViewChange: (view: ViewMode) => void
   onOpenCommandPalette: () => void
+  onPrint: () => void
 }
 
 const yearOptions = Array.from({ length: 301 }, (_, i) => 1900 + i)
@@ -40,6 +41,7 @@ export function CalendarHeader({
   onMonthChange,
   onViewChange,
   onOpenCommandPalette,
+  onPrint,
 }: CalendarHeaderProps) {
   const { t, localeCode } = useI18n()
 
@@ -68,7 +70,7 @@ export function CalendarHeader({
         </AnimatePresence>
       </h2>
 
-      <div className="flex flex-col items-start xl:items-end gap-2">
+      <div className="print:hidden flex flex-col items-start xl:items-end gap-2">
         <div className="flex flex-wrap items-center gap-2">
           <div className="inline-flex items-center rounded-xl border border-border/70 bg-card/60 overflow-hidden">
             <motion.div whileTap={{ scale: 0.92 }} transition={springPresets.snappy}>
@@ -149,6 +151,18 @@ export function CalendarHeader({
               aria-label="Search"
             >
               <Search className="h-4 w-4" />
+            </Button>
+          </motion.div>
+
+          <motion.div whileTap={{ scale: 0.92 }} transition={springPresets.snappy}>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onPrint}
+              className="h-10 w-10 rounded-xl border border-border/70 bg-card/60 hover:bg-accent/70"
+              aria-label={t.ui.print ?? "Print"}
+            >
+              <Printer className="h-4 w-4" />
             </Button>
           </motion.div>
         </div>

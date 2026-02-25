@@ -91,6 +91,10 @@ function CalendarApp() {
     setNavKey((k) => k + 1)
   }, [dispatch])
 
+  const handlePrint = useCallback(() => {
+    window.print()
+  }, [])
+
   useKeyboardNav({
     onPrev: handlePrev,
     onNext: handleNext,
@@ -144,9 +148,11 @@ function CalendarApp() {
 
   return (
     <main className="min-h-screen bg-background flex flex-col">
-      <AppHeader todayInfo={todayInfo} />
+      <div className="print:hidden">
+        <AppHeader todayInfo={todayInfo} />
+      </div>
 
-      <div className="max-w-[1440px] mx-auto px-4 md:px-6 py-4 md:py-8 xl:py-12 w-full flex-1 flex flex-col">
+      <div className="max-w-[1440px] mx-auto px-4 md:px-6 py-4 md:py-8 xl:py-12 print:px-0 print:py-0 w-full flex-1 flex flex-col">
         {/* Myanmar Year Summary */}
         <motion.div
           variants={badgeStagger.container}
@@ -188,13 +194,14 @@ function CalendarApp() {
           onMonthChange={(m) => dispatch({ type: "SET_MONTH", month: m })}
           onViewChange={(v) => dispatch({ type: "SET_VIEW", view: v })}
           onOpenCommandPalette={() => setCmdOpen(true)}
+          onPrint={handlePrint}
         />
 
-        <div className="divider-gradient mt-5" />
+        <div className="divider-gradient mt-5 print:mt-3" />
 
-        <div className="mt-5 flex flex-col lg:flex-row gap-5 lg:items-start">
+        <div className="mt-5 print:mt-3 flex flex-col lg:flex-row gap-5 print:gap-3 lg:items-start print:items-start">
           {/* Calendar view — stable min-h prevents footer jumping between 4/5/6 row months */}
-          <div ref={swipeRef} className="flex-1 min-w-0 md:min-h-[640px]">
+          <div ref={swipeRef} className="flex-1 min-w-0 md:min-h-[640px] print:min-h-0">
             <AnimatePresence mode="wait">
               {state.view === "month" && (
                 <motion.div
@@ -278,15 +285,15 @@ function CalendarApp() {
                 animate="animate"
                 exit="exit"
                 transition={fadeInUpTransition}
-                className="lg:w-[380px] shrink-0"
+                className="lg:w-[380px] print:w-[360px] shrink-0"
               >
-                <Card className="sticky top-4 min-h-[360px] rounded-3xl border-border/70 bg-card/70 backdrop-blur !py-3">
+                <Card className="sticky top-4 print:static min-h-[360px] print:min-h-0 rounded-3xl border-border/70 bg-card/70 print:bg-card print:shadow-none backdrop-blur print:backdrop-blur-none !py-3">
                   <CardContent className="px-4 pt-1 pb-4 md:px-5 md:pt-1.5 md:pb-5">
                     {showTodayWidget && (
-                      <>
+                      <div className="print:hidden">
                         <TodayWidget day={todayInfo} />
                         <Separator className="my-3" />
-                      </>
+                      </div>
                     )}
                     {state.selectedDay ? (
                       <DayDetailPanel
