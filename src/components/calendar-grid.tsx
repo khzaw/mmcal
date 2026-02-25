@@ -135,7 +135,11 @@ export function CalendarGrid({
               >
                 {/* Selected day indicator */}
                 {isSelected && (
-                  <div className="pointer-events-none absolute inset-0 rounded-[inherit] ring-1 ring-primary/80" />
+                  <motion.div
+                    layoutId={`month-selected-indicator-${year}-${month}`}
+                    transition={{ type: "spring", stiffness: 430, damping: 34, mass: 0.52 }}
+                    className="pointer-events-none absolute inset-0 rounded-[inherit] ring-1 ring-primary/80 bg-primary/[0.07]"
+                  />
                 )}
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 

@@ -41,6 +41,7 @@ export function AnimatedMoon({ phase, fortnightDay, size = 64, className }: Anim
   const vb = size + pad * 2
 
   const outerStars = getOrbitalStars(phase)
+  const phaseTransition = { type: "spring", stiffness: 180, damping: 24, mass: 0.75 } as const
 
   function renderStars(color: string, baseOpacity: number) {
     return outerStars.map((star, i) => {
@@ -81,10 +82,9 @@ export function AnimatedMoon({ phase, fortnightDay, size = 64, className }: Anim
 
     return (
       <motion.div
-        key={`full-${id}`}
-        initial={{ scale: 0, rotate: -360 }}
+        initial={false}
         animate={{ scale: 1, rotate: 0 }}
-        transition={{ type: "spring", stiffness: 120, damping: 8, mass: 1.2 }}
+        transition={phaseTransition}
         className={cn("shrink-0", className)}
       >
         <motion.div
@@ -196,10 +196,9 @@ export function AnimatedMoon({ phase, fortnightDay, size = 64, className }: Anim
   if (isNewMoon) {
     return (
       <motion.div
-        key={`new-${id}`}
-        initial={{ scale: 0.2, opacity: 0, rotate: 180 }}
+        initial={false}
         animate={{ scale: 1, opacity: 1, rotate: 0 }}
-        transition={{ type: "spring", stiffness: 100, damping: 10, mass: 1.5 }}
+        transition={phaseTransition}
         className={cn("shrink-0", className)}
       >
         <motion.div
@@ -311,10 +310,9 @@ export function AnimatedMoon({ phase, fortnightDay, size = 64, className }: Anim
 
   return (
     <motion.div
-      key={`phase-${phase}-${fortnightDay}-${id}`}
-      initial={{ scale: 0.3, opacity: 0, rotate: isWaxing ? -120 : 120 }}
+      initial={false}
       animate={{ scale: 1, opacity: 1, rotate: 0 }}
-      transition={{ type: "spring", stiffness: 130, damping: 10, mass: 1 }}
+      transition={phaseTransition}
       className={cn("shrink-0", className)}
     >
       <motion.div
@@ -387,13 +385,13 @@ export function AnimatedMoon({ phase, fortnightDay, size = 64, className }: Anim
                   cy={half}
                   ry={r}
                   fill={progress > 0.5 ? `url(#${litGradId})` : "var(--moon-new)"}
-                  initial={{ rx: 0 }}
+                  initial={false}
                   animate={{ rx: terminatorRx }}
                   transition={{
                     type: "spring",
-                    stiffness: 80,
-                    damping: 12,
-                    mass: 1.2,
+                    stiffness: 120,
+                    damping: 18,
+                    mass: 0.8,
                   }}
                 />
               </>
@@ -411,13 +409,13 @@ export function AnimatedMoon({ phase, fortnightDay, size = 64, className }: Anim
                   cy={half}
                   ry={r}
                   fill={progress > 0.5 ? "var(--moon-new)" : `url(#${litGradId})`}
-                  initial={{ rx: 0 }}
+                  initial={false}
                   animate={{ rx: terminatorRx }}
                   transition={{
                     type: "spring",
-                    stiffness: 80,
-                    damping: 12,
-                    mass: 1.2,
+                    stiffness: 120,
+                    damping: 18,
+                    mass: 0.8,
                   }}
                 />
               </>

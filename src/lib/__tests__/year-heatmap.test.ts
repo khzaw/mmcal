@@ -1,5 +1,4 @@
 import type { CalendarDayInfo } from "@/lib/burmese-calendar"
-import { cal_pyathada, cal_yatyaza } from "@/lib/burmese-calendar"
 import { describe, expect, it } from "vitest"
 import { getDayHeatBucket, getDayHeatScore } from "../year-heatmap"
 
@@ -22,49 +21,38 @@ function makeDay(partial?: Partial<CalendarDayInfo>): CalendarDayInfo {
   }
 }
 
-function findNeutralMonthWeekday(): { month: number; weekday: number } {
-  for (let month = 1; month <= 12; month++) {
-    for (let weekday = 0; weekday <= 6; weekday++) {
-      if (cal_yatyaza(month, weekday) === 0 && cal_pyathada(month, weekday) === 0) {
-        return { month, weekday }
-      }
-    }
-  }
-  throw new Error("No neutral month/weekday combination found")
-}
-
 describe("year heatmap scoring", () => {
-  it("keeps a fully normal day in the lowest bucket", () => {
-    const neutral = findNeutralMonthWeekday()
-    const day = makeDay({
-      myanmar: { myt: 0, my: 1387, mm: neutral.month, md: 8 },
-      weekday: neutral.weekday,
-    })
-
+  it("keeps a normal day in the lowest bucket", () => {
+    const day = makeDay()
     expect(getDayHeatScore(day)).toBe(0)
     expect(getDayHeatBucket(day)).toBe(0)
   })
 
-  it("raises full/new moon days above baseline", () => {
-    const neutral = findNeutralMonthWeekday()
-    const base = makeDay({
-      myanmar: { myt: 0, my: 1387, mm: neutral.month, md: 8 },
-      weekday: neutral.weekday,
+  it("ignores non-holiday signals", () => {
+    const day = makeDay({
+      moonPhase: 1,
+      sabbath: 1,
+      astro: ["Thamanyo"],
     })
-
-    expect(getDayHeatScore({ ...base, moonPhase: 1 })).toBe(1)
-    expect(getDayHeatScore({ ...base, moonPhase: 3 })).toBe(1)
+    expect(getDayHeatScore(day)).toBe(0)
+    expect(getDayHeatBucket(day)).toBe(0)
   })
 
-  it("pushes public holidays into highest intensity bucket", () => {
-    const neutral = findNeutralMonthWeekday()
+  it("marks holiday days as highlighted", () => {
     const day = makeDay({
-      myanmar: { myt: 0, my: 1387, mm: neutral.month, md: 8 },
-      weekday: neutral.weekday,
       holidays: ["Union Day"],
     })
 
-    expect(getDayHeatScore(day)).toBeGreaterThanOrEqual(5)
+    expect(getDayHeatScore(day)).toBe(1)
+    expect(getDayHeatBucket(day)).toBe(4)
+  })
+
+  it("counts secondary holiday list too", () => {
+    const day = makeDay({
+      holidays2: ["Christmas Day"],
+    })
+
+    expect(getDayHeatScore(day)).toBe(1)
     expect(getDayHeatBucket(day)).toBe(4)
   })
 })

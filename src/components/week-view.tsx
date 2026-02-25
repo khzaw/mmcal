@@ -122,7 +122,11 @@ export function WeekView({
               >
                 {/* Selected day indicator */}
                 {isSelected && (
-                  <div className="absolute inset-x-0 inset-y-auto top-0 w-auto h-[3px] bg-primary" />
+                  <motion.div
+                    layoutId="week-selected-indicator"
+                    transition={{ type: "spring", stiffness: 420, damping: 34, mass: 0.5 }}
+                    className="absolute inset-x-0 inset-y-auto top-0 w-auto h-[3px] bg-primary"
+                  />
                 )}
 
                 {/* Weekday header */}
@@ -425,7 +429,13 @@ function InfiniteWeekList({
               )}
             >
               {/* Selected indicator — left edge bar */}
-              {isSelected && <div className="absolute inset-y-0 left-0 w-[3px] bg-primary" />}
+              {isSelected && (
+                <motion.div
+                  layoutId="week-mobile-selected-indicator"
+                  transition={{ type: "spring", stiffness: 420, damping: 34, mass: 0.5 }}
+                  className="absolute inset-y-0 left-0 w-[3px] bg-primary"
+                />
+              )}
 
               <div className="flex items-center gap-3 w-full min-w-0">
                 {/* Weekday + date */}

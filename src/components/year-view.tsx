@@ -158,11 +158,8 @@ function YearHeatmap({ year, selectedJdn, todayJdn, onSelectDay, onGoToMonth }: 
   )
 
   const heatLegend = [
-    localeCode === "mm" ? "သာမန်" : "Calm",
-    localeCode === "mm" ? "နည်း" : "Low",
-    localeCode === "mm" ? "အသင့်" : "Moderate",
-    localeCode === "mm" ? "မြင့်" : "High",
-    localeCode === "mm" ? "ထူးခြား" : "Peak",
+    localeCode === "mm" ? "ပုံမှန်နေ့" : "Normal Day",
+    localeCode === "mm" ? "ရုံးပိတ်ရက်" : "Public Holiday",
   ]
 
   return (
@@ -175,15 +172,17 @@ function YearHeatmap({ year, selectedJdn, todayJdn, onSelectDay, onGoToMonth }: 
     >
       <div className="mb-3 flex items-center justify-between gap-2">
         <p className="text-xs text-muted-foreground/80">
-          {localeCode === "mm" ? "နှစ်အလိုက် ထူးခြားရက်များ" : "Year signal heatmap"}
+          {localeCode === "mm" ? "နှစ်အလိုက် ရုံးပိတ်ရက် အပူမြေပုံ" : "Year public holiday heatmap"}
         </p>
-        <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
-          {Array.from({ length: 5 }, (_, i) => (
-            <span key={i} className="inline-flex items-center gap-1">
-              <span className={cn("h-2 w-2 rounded-[3px] border", HEAT_BUCKET_CLASS[i])} />
-              {heatLegend[i]}
-            </span>
-          ))}
+        <div className="flex items-center gap-2.5 text-[10px] text-muted-foreground">
+          <span className="inline-flex items-center gap-1">
+            <span className={cn("h-2 w-2 rounded-[3px] border", HEAT_BUCKET_CLASS[0])} />
+            {heatLegend[0]}
+          </span>
+          <span className="inline-flex items-center gap-1">
+            <span className={cn("h-2 w-2 rounded-[3px] border", HEAT_BUCKET_CLASS[4])} />
+            {heatLegend[1]}
+          </span>
         </div>
       </div>
 
