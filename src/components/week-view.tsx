@@ -1,6 +1,7 @@
 import { springPresets } from "@/lib/animations"
 import type { CalendarDayInfo } from "@/lib/burmese-calendar"
 import { cal_pyathada, cal_yatyaza, getDayInfo, w2j } from "@/lib/burmese-calendar"
+import { getCircledDayDigitOffsetClass } from "@/lib/burmese-digit-offset"
 import { useI18n } from "@/lib/i18n/context"
 import { cn } from "@/lib/utils"
 import { AnimatePresence, motion } from "framer-motion"
@@ -32,7 +33,7 @@ export function WeekView({
   vertical = false,
   scrollKey = 0,
 }: WeekViewProps) {
-  const { t } = useI18n()
+  const { t, localeCode } = useI18n()
 
   const weekDays = useMemo(() => {
     const centerJdn = Math.round(w2j(year, month, day))
@@ -89,6 +90,11 @@ export function WeekView({
             const allHolidays = [...d.holidays, ...d.holidays2]
             const yatyaza = cal_yatyaza(d.myanmar.mm, d.weekday)
             const pyathada = cal_pyathada(d.myanmar.mm, d.weekday)
+            const dayNumberLabel = t.formatNumber(d.gregorian.day)
+            const circledDigitOffsetClass = getCircledDayDigitOffsetClass(
+              dayNumberLabel,
+              localeCode,
+            )
 
             return (
               <motion.button
@@ -107,6 +113,7 @@ export function WeekView({
                   "bg-card p-3 text-left relative overflow-hidden",
                   "transition-[transform,background-color,box-shadow] duration-300 ease-out will-change-transform",
                   "flex flex-col",
+                  "cursor-pointer",
                   "hover:bg-accent/60 hover:shadow-[0_12px_26px_-16px_rgba(0,0,0,0.65)] focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset",
                   isToday && !isSelected && "bg-primary/5",
                   hasHoliday && !isSelected && "bg-destructive/10",
@@ -147,16 +154,20 @@ export function WeekView({
                         !isNewMoon &&
                         (isSunday || isSaturday || hasHoliday) &&
                         "text-destructive",
-                      isToday &&
-                        !isFullMoon &&
-                        !isNewMoon &&
-                        "text-primary font-bold underline underline-offset-4 decoration-2 decoration-primary",
+                      isToday && !isFullMoon && !isNewMoon && "text-primary font-bold",
                       isToday &&
                         (isFullMoon || isNewMoon) &&
                         "ring-2 ring-primary ring-offset-1 ring-offset-card",
                     )}
                   >
-                    {t.formatNumber(d.gregorian.day)}
+                    <span
+                      className={cn(
+                        "inline-block",
+                        (isFullMoon || isNewMoon) && circledDigitOffsetClass,
+                      )}
+                    >
+                      {dayNumberLabel}
+                    </span>
                   </span>
                   {!isFullMoon && !isNewMoon && <MoonPhaseIcon phase={d.moonPhase} size={16} />}
                 </div>
@@ -407,6 +418,7 @@ function InfiniteWeekList({
               onClick={() => onSelectDay(d)}
               className={cn(
                 "w-full bg-card px-3 py-2.5 text-left transition-colors relative overflow-hidden",
+                "cursor-pointer",
                 "active:bg-accent/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset",
                 isToday && !isSelected && "bg-primary/5",
                 hasHoliday && !isSelected && "bg-destructive/10",
@@ -437,8 +449,7 @@ function InfiniteWeekList({
                         !isNewMoon &&
                         (isSunday || isSaturday || hasHoliday) &&
                         "text-destructive",
-                      isToday &&
-                        "text-primary underline underline-offset-2 decoration-2 decoration-primary",
+                      isToday && "text-primary",
                     )}
                   >
                     {t.formatNumber(d.gregorian.day)}

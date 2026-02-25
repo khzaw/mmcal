@@ -90,6 +90,10 @@ describe("Burmese locale specifics", () => {
     expect(mm.formatNumber(2026)).toBe("၂၀၂၆")
   })
 
+  it("uses the concise common year type label", () => {
+    expect(mm.yearTypes[0]).toBe("ပုံမှန်")
+  })
+
   it("has Burmese holiday translations", () => {
     expect(mm.holidays["Independence Day"]).toBeTruthy()
     expect(mm.holidays["Buddha Day"]).toBeTruthy()

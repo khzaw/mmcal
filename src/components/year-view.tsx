@@ -91,6 +91,7 @@ function MiniMonth({
               }}
               className={cn(
                 "w-full aspect-square flex items-center justify-center text-[9px] rounded-sm transition-colors relative",
+                "cursor-pointer",
                 "hover:bg-accent/60",
                 isSelected && "bg-primary text-primary-foreground",
                 isToday && !isSelected && "ring-1 ring-primary",

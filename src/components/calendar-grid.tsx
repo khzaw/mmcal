@@ -1,6 +1,7 @@
 import { springPresets } from "@/lib/animations"
 import type { CalendarDayInfo } from "@/lib/burmese-calendar"
 import { getGregorianMonthDays } from "@/lib/burmese-calendar"
+import { getCircledDayDigitOffsetClass } from "@/lib/burmese-digit-offset"
 import { useI18n } from "@/lib/i18n/context"
 import { cn } from "@/lib/utils"
 import { AnimatePresence, motion } from "framer-motion"
@@ -31,7 +32,7 @@ export function CalendarGrid({
   todayJdn,
   direction = 0,
 }: CalendarGridProps) {
-  const { t } = useI18n()
+  const { t, localeCode } = useI18n()
   const days = useMemo(() => getGregorianMonthDays(year, month), [year, month])
 
   const firstDayWeekday = days[0]?.weekday ?? 0
@@ -103,6 +104,11 @@ export function CalendarGrid({
             const holidayLabel = day.holidays[0]
               ? (t.holidays[day.holidays[0]] ?? day.holidays[0])
               : undefined
+            const dayNumberLabel = t.formatNumber(day.gregorian.day)
+            const circledDigitOffsetClass = getCircledDayDigitOffsetClass(
+              dayNumberLabel,
+              localeCode,
+            )
 
             return (
               <motion.button
@@ -120,6 +126,7 @@ export function CalendarGrid({
                 className={cn(
                   "bg-card/78 h-[78px] md:h-[108px] p-1.5 md:p-2 text-left relative group overflow-hidden",
                   "transition-[transform,background-color,box-shadow] duration-300 ease-out will-change-transform",
+                  "cursor-pointer",
                   "hover:bg-accent/68 hover:shadow-[0_12px_26px_-16px_rgba(0,0,0,0.65)] focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset",
                   isToday && !isSelected && "bg-primary/5",
                   hasHoliday && !isSelected && "bg-destructive/10",
@@ -154,16 +161,20 @@ export function CalendarGrid({
                         !isNewMoon &&
                         (isSunday || isSaturday || hasHoliday) &&
                         "text-destructive",
-                      isToday &&
-                        !isFullMoon &&
-                        !isNewMoon &&
-                        "text-primary font-bold underline underline-offset-4 decoration-2 decoration-primary",
+                      isToday && !isFullMoon && !isNewMoon && "text-primary font-bold",
                       isToday &&
                         (isFullMoon || isNewMoon) &&
                         "ring-2 ring-primary ring-offset-1 ring-offset-card",
                     )}
                   >
-                    {t.formatNumber(day.gregorian.day)}
+                    <span
+                      className={cn(
+                        "inline-block",
+                        (isFullMoon || isNewMoon) && circledDigitOffsetClass,
+                      )}
+                    >
+                      {dayNumberLabel}
+                    </span>
                   </span>
                 </div>
 
@@ -183,11 +194,17 @@ export function CalendarGrid({
                   >
                     {myanmarLabel}
                   </p>
-                  {holidayLabel && (
-                    <p className="text-[10px] md:text-[11px] leading-normal text-destructive/70 truncate mt-0.5">
-                      {holidayLabel}
-                    </p>
-                  )}
+                  <p
+                    aria-hidden={!holidayLabel}
+                    className={cn(
+                      "mt-0.5 min-h-[1.1em] text-[10px] md:text-[11px] leading-normal truncate",
+                      holidayLabel
+                        ? "text-destructive/70"
+                        : "select-none pointer-events-none opacity-0",
+                    )}
+                  >
+                    {holidayLabel ?? "\u00A0"}
+                  </p>
                 </div>
 
                 {/* Sabbath indicator */}

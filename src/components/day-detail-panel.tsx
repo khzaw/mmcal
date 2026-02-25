@@ -110,12 +110,18 @@ export function DayDetailPanel({ day, hideHero = false }: DayDetailPanelProps) {
     {
       key: "myanmarYear",
       label: t.ui.myanmarYear ?? "Myanmar Year",
-      value: `${t.formatNumber(myanmar.my)} ${t.ui.me ?? "ME"}`,
+      value:
+        localeCode === "en"
+          ? `${t.formatNumber(myanmar.my)} ${t.ui.me ?? "ME"}`
+          : t.formatNumber(myanmar.my),
     },
     {
       key: "sasanaYear",
       label: t.ui.sasanaYear ?? "Sasana Year",
-      value: `${t.formatNumber(sasanaYear)} ${t.ui.be ?? "BE"}`,
+      value:
+        localeCode === "en"
+          ? `${t.formatNumber(sasanaYear)} ${t.ui.be ?? "BE"}`
+          : t.formatNumber(sasanaYear),
     },
     { key: "yearType", label: t.ui.yearType ?? "Year Type", value: t.yearTypes[myanmar.myt] ?? "" },
     { key: "moonPhase", label: t.ui.moonPhase ?? "Moon Phase", value: moonPhaseName },
@@ -247,7 +253,10 @@ export function DayDetailPanel({ day, hideHero = false }: DayDetailPanelProps) {
           </motion.div>
 
           {astroBadges.length > 0 && (
-            <motion.div variants={detailSectionStagger.item}>
+            <motion.div
+              variants={detailSectionStagger.item}
+              className="rounded-2xl bg-background/35 px-4 pt-4 pb-3"
+            >
               <h4
                 className={cn(
                   "text-xs mb-2 text-muted-foreground",
@@ -268,6 +277,8 @@ export function DayDetailPanel({ day, hideHero = false }: DayDetailPanelProps) {
                       variant="outline"
                       className={cn(
                         "text-xs rounded-full border-border/70 bg-secondary/35",
+                        astroLabel === (t.astro.Yatyaza ?? "Yatyaza") &&
+                          "border-chart-2/45 bg-chart-2/14 text-chart-2",
                         astroLabel === (t.astro.Pyathada ?? "Pyathada") ||
                           astroLabel === (t.astro["Afternoon Pyathada"] ?? "Afternoon Pyathada")
                           ? "text-destructive border-destructive/40 bg-destructive/15"

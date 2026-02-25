@@ -19,7 +19,7 @@ export function AppHeader({ todayInfo }: AppHeaderProps) {
   const moonPhaseName = t.moonPhases[todayInfo.moonPhase]
 
   return (
-    <header className="border-b border-border/70 bg-card/85 backdrop-blur supports-[backdrop-filter]:bg-card/65">
+    <header className="bg-card/85 backdrop-blur supports-[backdrop-filter]:bg-card/65">
       <div className="max-w-[1440px] mx-auto px-4 md:px-6 py-3">
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-3 min-w-0">
@@ -47,7 +47,8 @@ export function AppHeader({ todayInfo }: AppHeaderProps) {
               )}
             >
               • {monthName} {moonPhaseName} {t.formatNumber(todayInfo.fortnightDay)} |{" "}
-              {t.formatNumber(todayInfo.myanmar.my)} {t.ui.me}
+              {t.formatNumber(todayInfo.myanmar.my)}
+              {localeCode === "en" ? ` ${t.ui.me}` : ""}
             </motion.span>
             <LanguageToggle />
             <Button
