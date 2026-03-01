@@ -72,7 +72,7 @@ export function CalendarGrid({
           animate={{ x: 0, opacity: 1 }}
           exit={{ x: direction > 0 ? -80 : 80, opacity: 0 }}
           transition={{ duration: 0.2, ease: "easeInOut" }}
-          className="relative grid grid-cols-7 gap-px rounded-xl border border-border/55 bg-border/15 p-px overflow-hidden"
+          className="relative grid grid-cols-7 gap-px rounded-xl bg-border/15 p-px overflow-hidden"
         >
           <motion.div
             aria-hidden="true"

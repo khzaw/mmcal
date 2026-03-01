@@ -6,7 +6,7 @@ import { MoonPhaseIcon } from "@/components/moon-phase-icon"
 import { ThemeProvider } from "@/components/theme-toggle"
 import { TodayWidget } from "@/components/today-widget"
 import { WeekView } from "@/components/week-view"
-import { badgeStagger, fadeInUp, fadeInUpTransition } from "@/lib/animations"
+import { fadeInUp, fadeInUpTransition } from "@/lib/animations"
 import { I18nProvider, useI18n } from "@/lib/i18n/context"
 import { AnimatePresence, motion } from "framer-motion"
 import { Suspense, lazy, useCallback, useEffect, useRef, useState } from "react"
@@ -17,13 +17,11 @@ const CommandPalette = lazy(() =>
     default: m.CommandPalette,
   })),
 )
-import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { useCalendarState } from "@/hooks/use-calendar-state"
 import { useKeyboardNav } from "@/hooks/use-keyboard-nav"
 import { useSwipeNav } from "@/hooks/use-swipe-nav"
-import { cal_my, getMonthName, j2m, my2sy, w2j } from "@/lib/burmese-calendar"
 import { readURLState, writeURLState } from "@/lib/url-state"
 import {
   isSwipeNavigationEnabled,
@@ -99,12 +97,6 @@ function CalendarApp() {
     },
   })
 
-  // Myanmar year info for the current month
-  const midMonthJdn = Math.round(w2j(state.year, state.month, 15))
-  const midMonthMm = j2m(midMonthJdn)
-  const myYearInfo = cal_my(midMonthMm.my)
-  const mmMonthName = t.myanmarMonths[midMonthMm.mm] ?? getMonthName(midMonthMm.mm, midMonthMm.myt)
-
   // Mobile detection for touch swipe support
   const [isMobile, setIsMobile] = useState(() => window.matchMedia("(max-width: 767px)").matches)
   useEffect(() => {
@@ -131,46 +123,12 @@ function CalendarApp() {
       : "neutral"
 
   return (
-    <main className="relative min-h-screen bg-background flex flex-col overflow-x-clip">
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0">
-        <div className="absolute -top-28 -left-20 h-72 w-72 rounded-full bg-foreground/[0.045] blur-3xl dark:bg-foreground/[0.05]" />
-        <div className="absolute -top-24 right-[-5rem] h-64 w-64 rounded-full bg-foreground/[0.04] blur-3xl dark:bg-foreground/[0.04]" />
-      </div>
-
+    <main className="min-h-screen bg-background flex flex-col">
       <div className="print:hidden">
         <AppHeader todayInfo={todayInfo} />
       </div>
 
-      <div className="relative z-[1] max-w-[1440px] mx-auto px-4 md:px-6 py-4 md:py-8 xl:py-12 print:px-0 print:py-0 w-full flex-1 flex flex-col">
-        {/* Myanmar Year Summary */}
-        <motion.div
-          variants={badgeStagger.container}
-          initial="hidden"
-          animate="visible"
-          className="surface-panel mb-4 rounded-2xl px-3 py-2.5 md:px-4 md:py-3 flex flex-wrap items-center gap-2 md:gap-4 text-sm"
-        >
-          <motion.div variants={badgeStagger.item}>
-            <Badge variant="secondary" className="gap-1 text-xs font-medium leading-relaxed">
-              {t.ui.myanmarYear} {t.formatNumber(midMonthMm.my)}
-            </Badge>
-          </motion.div>
-          <motion.div variants={badgeStagger.item}>
-            <Badge variant="secondary" className="gap-1 text-xs font-medium leading-relaxed">
-              {t.ui.sasanaYear} {t.formatNumber(my2sy(midMonthMm.my))}
-            </Badge>
-          </motion.div>
-          <motion.div variants={badgeStagger.item}>
-            <Badge variant="outline" className="gap-1 text-xs leading-relaxed">
-              {t.yearTypes[myYearInfo.myt]}
-            </Badge>
-          </motion.div>
-          <motion.div variants={badgeStagger.item}>
-            <Badge variant="outline" className="gap-1 text-xs leading-relaxed">
-              {mmMonthName}
-            </Badge>
-          </motion.div>
-        </motion.div>
-
+      <div className="max-w-[1440px] mx-auto px-4 md:px-6 py-4 md:py-8 xl:py-12 print:px-0 print:py-0 w-full flex-1 flex flex-col">
         {/* Calendar Header */}
         <CalendarHeader
           year={state.year}
@@ -254,7 +212,7 @@ function CalendarApp() {
                 transition={fadeInUpTransition}
                 className="lg:w-[380px] print:w-[360px] shrink-0"
               >
-                <Card className="surface-shell sticky top-4 print:static min-h-[360px] print:min-h-0 rounded-3xl print:bg-card print:shadow-none print:backdrop-blur-none !py-3">
+                <Card className="surface-shell border-0 shadow-none sticky top-4 print:static min-h-[360px] print:min-h-0 rounded-3xl print:bg-card print:shadow-none print:backdrop-blur-none !py-3">
                   <CardContent className="px-4 pt-1 pb-4 md:px-5 md:pt-1.5 md:pb-5">
                     {showTodayWidget && (
                       <div className="print:hidden">

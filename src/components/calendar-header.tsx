@@ -50,7 +50,7 @@ export function CalendarHeader({
       <h2
         className={cn(
           "text-3xl md:text-5xl font-bold text-foreground tracking-tight overflow-hidden drop-shadow-[0_1px_0_rgba(255,255,255,0.08)]",
-          localeCode === "mm" ? "leading-[1.24]" : "leading-tight",
+          localeCode === "mm" ? "leading-[1.28]" : "leading-tight",
         )}
       >
         <AnimatePresence mode="wait">
@@ -75,105 +75,100 @@ export function CalendarHeader({
         </AnimatePresence>
       </h2>
 
-      <div className="print:hidden flex flex-col items-start xl:items-end gap-2">
-        <div className="surface-panel rounded-2xl p-2 flex flex-wrap items-center gap-2">
-          <div className="inline-flex items-center rounded-xl border border-border/60 bg-background/55 overflow-hidden shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
-            <motion.div whileTap={{ scale: 0.92 }} transition={springPresets.snappy}>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={onPrev}
-                aria-label="Previous"
-                className="h-10 w-10 rounded-none border-0 hover:bg-accent/72"
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-            </motion.div>
-            <motion.div whileTap={{ scale: 0.92 }} transition={springPresets.snappy}>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={onToday}
-                className={cn(
-                  "h-10 rounded-none border-x border-border/60 px-4 gap-1.5 text-xs hover:bg-accent/72",
-                  localeCode === "en" && "tracking-[0.06em]",
-                )}
-              >
-                <CalendarDays className="h-3.5 w-3.5" />
-                {t.ui.today}
-              </Button>
-            </motion.div>
-            <motion.div whileTap={{ scale: 0.92 }} transition={springPresets.snappy}>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={onNext}
-                aria-label="Next"
-                className="h-10 w-10 rounded-none border-0 hover:bg-accent/70"
-              >
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-            </motion.div>
-          </div>
-
-          <Select
-            value={month.toString()}
-            onValueChange={(val) => onMonthChange(Number.parseInt(val))}
-          >
-            <SelectTrigger className="w-[150px] h-10 text-xs rounded-xl border-border/60 bg-background/55 hover:bg-accent/62 transition-colors shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {t.gregorianMonths.map((name, i) => (
-                <SelectItem key={i} value={(i + 1).toString()}>
-                  {name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Select
-            value={year.toString()}
-            onValueChange={(val) => onYearChange(Number.parseInt(val))}
-          >
-            <SelectTrigger className="w-[110px] h-10 text-xs rounded-xl border-border/60 bg-background/55 hover:bg-accent/62 transition-colors shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent className="max-h-[240px]">
-              {yearOptions.map((y) => (
-                <SelectItem key={y} value={y.toString()}>
-                  {t.formatNumber(y)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
+      <div className="print:hidden flex flex-wrap items-center xl:justify-end gap-2 rounded-2xl bg-background/55 p-2 backdrop-blur">
+        <div className="inline-flex items-center gap-1 rounded-xl bg-background/62 p-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
           <motion.div whileTap={{ scale: 0.92 }} transition={springPresets.snappy}>
             <Button
               variant="ghost"
               size="icon"
-              onClick={onOpenCommandPalette}
-              className="h-10 w-10 rounded-xl border border-border/60 bg-background/55 hover:bg-accent/72 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
-              aria-label="Search"
+              onClick={onPrev}
+              aria-label="Previous"
+              className="h-9 w-9 rounded-lg border-0 hover:bg-accent/72"
             >
-              <Search className="h-4 w-4" />
+              <ChevronLeft className="h-4 w-4" />
             </Button>
           </motion.div>
-
+          <motion.div whileTap={{ scale: 0.92 }} transition={springPresets.snappy}>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onToday}
+              className={cn(
+                "h-9 rounded-lg border-0 px-4 gap-1.5 text-xs hover:bg-accent/72",
+                localeCode === "en" && "tracking-[0.06em]",
+              )}
+            >
+              <CalendarDays className="h-3.5 w-3.5" />
+              {t.ui.today}
+            </Button>
+          </motion.div>
           <motion.div whileTap={{ scale: 0.92 }} transition={springPresets.snappy}>
             <Button
               variant="ghost"
               size="icon"
-              onClick={onPrint}
-              className="h-10 w-10 rounded-xl border border-border/60 bg-background/55 hover:bg-accent/72 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
-              aria-label={t.ui.print ?? "Print"}
+              onClick={onNext}
+              aria-label="Next"
+              className="h-9 w-9 rounded-lg border-0 hover:bg-accent/72"
             >
-              <Printer className="h-4 w-4" />
+              <ChevronRight className="h-4 w-4" />
             </Button>
           </motion.div>
         </div>
 
+        <Select
+          value={month.toString()}
+          onValueChange={(val) => onMonthChange(Number.parseInt(val))}
+        >
+          <SelectTrigger className="w-[150px] h-9 text-xs rounded-xl border-0 bg-background/62 hover:bg-accent/62 transition-colors shadow-none">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {t.gregorianMonths.map((name, i) => (
+              <SelectItem key={i} value={(i + 1).toString()}>
+                {name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select value={year.toString()} onValueChange={(val) => onYearChange(Number.parseInt(val))}>
+          <SelectTrigger className="w-[110px] h-9 text-xs rounded-xl border-0 bg-background/62 hover:bg-accent/62 transition-colors shadow-none">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent className="max-h-[240px]">
+            {yearOptions.map((y) => (
+              <SelectItem key={y} value={y.toString()}>
+                {t.formatNumber(y)}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <motion.div whileTap={{ scale: 0.92 }} transition={springPresets.snappy}>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onOpenCommandPalette}
+            className="h-9 w-9 rounded-xl border-0 bg-background/62 hover:bg-accent/72"
+            aria-label="Search"
+          >
+            <Search className="h-4 w-4" />
+          </Button>
+        </motion.div>
+
+        <motion.div whileTap={{ scale: 0.92 }} transition={springPresets.snappy}>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onPrint}
+            className="h-9 w-9 rounded-xl border-0 bg-background/62 hover:bg-accent/72"
+            aria-label={t.ui.print ?? "Print"}
+          >
+            <Printer className="h-4 w-4" />
+          </Button>
+        </motion.div>
+
         <Tabs value={view} onValueChange={(v) => onViewChange(v as ViewMode)}>
-          <TabsList className="h-10 rounded-xl border border-border/60 bg-background/55 p-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
+          <TabsList className="h-9 rounded-xl border-0 bg-background/62 p-1 shadow-none">
             <TabsTrigger
               value="month"
               className={cn(
