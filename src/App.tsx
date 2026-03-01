@@ -144,8 +144,6 @@ function CalendarApp() {
           onPrint={handlePrint}
         />
 
-        <div className="divider-gradient mt-5 print:mt-3" />
-
         <div className="mt-5 print:mt-3 flex flex-col lg:flex-row gap-5 print:gap-3 lg:items-start print:items-start">
           {/* Calendar view — stable min-h prevents footer jumping between 4/5/6 row months */}
           <div ref={swipeRef} className="flex-1 min-w-0 md:min-h-[640px] print:min-h-0 relative">

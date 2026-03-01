@@ -49,7 +49,7 @@ export function CalendarHeader({
     <div className="flex flex-col gap-5 xl:flex-row xl:items-end xl:justify-between">
       <h2
         className={cn(
-          "text-3xl md:text-5xl font-bold text-foreground tracking-tight overflow-hidden drop-shadow-[0_1px_0_rgba(255,255,255,0.08)]",
+          "text-3xl md:text-5xl font-bold text-foreground tracking-tight overflow-hidden",
           localeCode === "mm" ? "leading-[1.28]" : "leading-tight",
         )}
       >
@@ -75,8 +75,8 @@ export function CalendarHeader({
         </AnimatePresence>
       </h2>
 
-      <div className="print:hidden flex flex-wrap items-center xl:justify-end gap-2 rounded-2xl bg-background/55 p-2 backdrop-blur">
-        <div className="inline-flex items-center gap-1 rounded-xl bg-background/62 p-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+      <div className="print:hidden flex flex-wrap items-center xl:justify-end gap-2 rounded-2xl bg-background/55 p-2">
+        <div className="inline-flex items-center gap-1 rounded-xl bg-background/62 p-1">
           <motion.div whileTap={{ scale: 0.92 }} transition={springPresets.snappy}>
             <Button
               variant="ghost"
@@ -172,7 +172,10 @@ export function CalendarHeader({
             <TabsTrigger
               value="month"
               className={cn(
-                "text-xs px-3 leading-relaxed",
+                "relative h-7 rounded-lg bg-transparent text-xs px-3 leading-relaxed text-muted-foreground transition-colors",
+                "data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-foreground",
+                "after:pointer-events-none after:absolute after:left-2 after:right-2 after:bottom-[3px] after:h-px after:origin-center after:scale-x-0 after:opacity-0 after:bg-foreground/65 after:transition-[transform,opacity] after:duration-200 after:ease-out",
+                "data-[state=active]:after:scale-x-100 data-[state=active]:after:opacity-100",
                 localeCode === "en" && "tracking-[0.06em]",
               )}
             >
@@ -181,7 +184,10 @@ export function CalendarHeader({
             <TabsTrigger
               value="week"
               className={cn(
-                "text-xs px-3 leading-relaxed",
+                "relative h-7 rounded-lg bg-transparent text-xs px-3 leading-relaxed text-muted-foreground transition-colors",
+                "data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-foreground",
+                "after:pointer-events-none after:absolute after:left-2 after:right-2 after:bottom-[3px] after:h-px after:origin-center after:scale-x-0 after:opacity-0 after:bg-foreground/65 after:transition-[transform,opacity] after:duration-200 after:ease-out",
+                "data-[state=active]:after:scale-x-100 data-[state=active]:after:opacity-100",
                 localeCode === "en" && "tracking-[0.06em]",
               )}
             >
@@ -190,7 +196,10 @@ export function CalendarHeader({
             <TabsTrigger
               value="year"
               className={cn(
-                "text-xs px-3 leading-relaxed",
+                "relative h-7 rounded-lg bg-transparent text-xs px-3 leading-relaxed text-muted-foreground transition-colors",
+                "data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-foreground",
+                "after:pointer-events-none after:absolute after:left-2 after:right-2 after:bottom-[3px] after:h-px after:origin-center after:scale-x-0 after:opacity-0 after:bg-foreground/65 after:transition-[transform,opacity] after:duration-200 after:ease-out",
+                "data-[state=active]:after:scale-x-100 data-[state=active]:after:opacity-100",
                 localeCode === "en" && "tracking-[0.06em]",
               )}
             >

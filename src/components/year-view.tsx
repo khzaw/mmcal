@@ -237,7 +237,7 @@ function YearHeatmap({ year, selectedJdn, todayJdn, onSelectDay, onGoToMonth }: 
                         title={summaryParts.join(" • ")}
                         className={cn(
                           "relative h-3.5 md:h-4 rounded-[4px] border transition-all duration-200",
-                          "cursor-pointer hover:scale-[1.28] hover:z-10 hover:shadow-[0_8px_22px_-14px_rgba(0,0,0,0.8)]",
+                          "cursor-pointer hover:scale-[1.28] hover:z-10",
                           HEAT_BUCKET_CLASS[bucket],
                           isSelected && "ring-1 ring-primary/85 ring-offset-1 ring-offset-card",
                         )}

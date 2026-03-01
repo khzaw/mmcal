@@ -96,6 +96,7 @@ export function DayDetailPanel({ day, hideHero = false }: DayDetailPanelProps) {
       ? (EN_MONTH_SHORT[gregorian.month - 1] ?? gregorianMonthName)
       : gregorianMonthName
   const monthName = t.myanmarMonths[myanmar.mm] ?? day.monthName
+  const showFortnightDay = moonPhase !== 1 && moonPhase !== 3
   const sabbathLabel =
     day.sabbath === 1
       ? (t.astro.Sabbath ?? "Sabbath")
@@ -265,7 +266,8 @@ export function DayDetailPanel({ day, hideHero = false }: DayDetailPanelProps) {
                               : "text-muted-foreground/90",
                         )}
                       >
-                        {monthName} {moonPhaseName} {t.formatNumber(fortnightDay)}
+                        {monthName} {moonPhaseName}
+                        {showFortnightDay ? ` ${t.formatNumber(fortnightDay)}` : ""}
                       </p>
                     </div>
                   </div>
@@ -294,7 +296,7 @@ export function DayDetailPanel({ day, hideHero = false }: DayDetailPanelProps) {
                 </Button>
               </DialogTrigger>
 
-              <DialogContent className="sm:max-w-3xl rounded-2xl border-border/70 bg-card/90 backdrop-blur-md">
+              <DialogContent className="sm:max-w-3xl rounded-2xl border-border/70 bg-card/95">
                 <DialogHeader>
                   <DialogTitle>{t.ui.shareCard ?? "Share Card"}</DialogTitle>
                   <DialogDescription>

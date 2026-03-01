@@ -33,6 +33,7 @@ export function CalendarGrid({
   direction = 0,
 }: CalendarGridProps) {
   const { t, localeCode } = useI18n()
+  const isEnglish = localeCode === "en"
   const days = useMemo(() => getGregorianMonthDays(year, month), [year, month])
 
   const firstDayWeekday = days[0]?.weekday ?? 0
@@ -144,7 +145,7 @@ export function CalendarGrid({
                   "bg-card/78 h-[78px] md:h-[108px] p-1.5 md:p-2 text-left relative group overflow-hidden",
                   "transition-[transform,background-color,box-shadow] duration-300 ease-out will-change-transform",
                   "cursor-pointer",
-                  "hover:bg-accent/68 hover:shadow-[0_14px_30px_-20px_rgba(0,0,0,0.78)] focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset",
+                  "hover:bg-accent/68 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset",
                   isToday && !isSelected && "bg-primary/5",
                   hasHoliday && !isSelected && "bg-destructive/10",
                   isSelected && "bg-primary/10",
@@ -163,20 +164,25 @@ export function CalendarGrid({
                 {/* Gregorian day number */}
                 <div
                   className={cn(
-                    "relative z-10 flex items-start justify-between gap-0.5 h-7 md:h-9",
-                    (isFullMoon || isNewMoon) && "h-9 md:h-11 mb-0.5",
+                    "relative z-10 flex items-start justify-between gap-0.5",
+                    isEnglish ? "h-6 md:h-8" : "h-7 md:h-9",
+                    (isFullMoon || isNewMoon) &&
+                      (isEnglish ? "h-8 md:h-10 mb-0" : "h-9 md:h-11 mb-0.5"),
                   )}
                 >
                   <span
                     className={cn(
-                      "text-xl md:text-2xl leading-none inline-flex items-center justify-center",
+                      "leading-none inline-flex items-center justify-center",
+                      isEnglish ? "text-[1.35rem] md:text-[1.6rem]" : "text-xl md:text-2xl",
                       isHolidayFullMoon &&
-                        "bg-[var(--moon-full)] text-white font-bold rounded-full w-7 h-7 md:w-9 md:h-9 text-base md:text-lg",
+                        "bg-[var(--moon-full)] text-white font-bold rounded-full w-7 h-7 md:w-9 md:h-9",
                       isFullMoon &&
                         !hasHoliday &&
-                        "bg-foreground text-background font-bold rounded-full w-7 h-7 md:w-9 md:h-9 text-base md:text-lg",
+                        "bg-foreground text-background font-bold rounded-full w-7 h-7 md:w-9 md:h-9",
                       isNewMoon &&
-                        "bg-background text-foreground border border-foreground/55 font-bold rounded-full w-7 h-7 md:w-9 md:h-9 text-base md:text-lg",
+                        "bg-background text-foreground border border-foreground/55 font-bold rounded-full w-7 h-7 md:w-9 md:h-9",
+                      (isFullMoon || isNewMoon) &&
+                        (isEnglish ? "text-[1.05rem] md:text-[1.2rem]" : "text-base md:text-lg"),
                       !isFullMoon && !isNewMoon && "font-semibold",
                       !isFullMoon &&
                         !isNewMoon &&
@@ -203,14 +209,25 @@ export function CalendarGrid({
                 <div className="relative z-10">
                   <p
                     className={cn(
-                      "text-[10px] md:text-[11px] leading-relaxed truncate",
+                      "truncate",
+                      isEnglish
+                        ? "text-[9px] md:text-[10px] leading-normal"
+                        : "text-[10px] md:text-[11px] leading-relaxed",
                       isHolidayFullMoon
-                        ? "text-[var(--moon-full-text)]/70 font-medium"
+                        ? isEnglish
+                          ? "text-[var(--moon-full-text)]/62 font-medium"
+                          : "text-[var(--moon-full-text)]/70 font-medium"
                         : isFullMoon
-                          ? "text-foreground/70"
+                          ? isEnglish
+                            ? "text-foreground/60"
+                            : "text-foreground/70"
                           : isNewMoon
-                            ? "text-foreground/62"
-                            : "text-muted-foreground/70",
+                            ? isEnglish
+                              ? "text-foreground/54"
+                              : "text-foreground/62"
+                            : isEnglish
+                              ? "text-muted-foreground/58"
+                              : "text-muted-foreground/70",
                     )}
                   >
                     {myanmarLabel}
@@ -218,9 +235,14 @@ export function CalendarGrid({
                   <p
                     aria-hidden={!holidayLabel}
                     className={cn(
-                      "mt-0.5 min-h-[1.1em] text-[10px] md:text-[11px] leading-normal truncate",
+                      "truncate",
+                      isEnglish
+                        ? "mt-0 min-h-[1em] text-[9px] md:text-[10px] leading-normal"
+                        : "mt-0.5 min-h-[1.1em] text-[10px] md:text-[11px] leading-normal",
                       holidayLabel
-                        ? "text-destructive/70"
+                        ? isEnglish
+                          ? "text-destructive/58"
+                          : "text-destructive/70"
                         : "select-none pointer-events-none opacity-0",
                     )}
                   >

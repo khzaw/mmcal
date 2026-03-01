@@ -123,7 +123,7 @@ export function WeekView({
                   "transition-[transform,background-color,box-shadow] duration-300 ease-out will-change-transform",
                   "flex flex-col",
                   "cursor-pointer",
-                  "hover:bg-accent/60 hover:shadow-[0_12px_26px_-16px_rgba(0,0,0,0.65)] focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset",
+                  "hover:bg-accent/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset",
                   isToday && !isSelected && "bg-primary/5",
                   hasHoliday && !isSelected && "bg-destructive/10",
                   isSelected && "bg-primary/10",
@@ -418,7 +418,7 @@ function InfiniteWeekList({
         return (
           <Fragment key={d.jdn}>
             {showMonthHeader && (
-              <div className="sticky top-0 z-10 bg-background/90 backdrop-blur-sm px-3 py-1.5 text-xs font-medium text-muted-foreground border-b border-border/30">
+              <div className="sticky top-0 z-10 bg-background/90 px-3 py-1.5 text-xs font-medium text-muted-foreground border-b border-border/30">
                 {t.gregorianMonths[d.gregorian.month - 1]} {t.formatNumber(d.gregorian.year)}
               </div>
             )}

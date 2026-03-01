@@ -34,6 +34,7 @@ export function TodayWidget({ day }: TodayWidgetProps) {
     localeCode === "en"
       ? (EN_MONTH_SHORT[day.gregorian.month - 1] ?? gregorianMonthName)
       : gregorianMonthName
+  const showFortnightDay = day.moonPhase !== 1 && day.moonPhase !== 3
   const dailyBrief = buildTodayBrief(day, t)
 
   return (
@@ -43,8 +44,6 @@ export function TodayWidget({ day }: TodayWidgetProps) {
       transition={{ duration: 0.16, ease: "easeOut" }}
       className="surface-shell relative overflow-hidden rounded-2xl px-4 py-3.5"
     >
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-12 bg-gradient-to-b from-white/[0.06] to-transparent" />
-
       <div className="flex items-center justify-between gap-2">
         <p
           className={cn(
@@ -75,7 +74,8 @@ export function TodayWidget({ day }: TodayWidgetProps) {
               localeCode === "mm" ? "leading-[1.85]" : "leading-relaxed",
             )}
           >
-            {monthName} {t.moonPhases[day.moonPhase]} {t.formatNumber(day.fortnightDay)}
+            {monthName} {t.moonPhases[day.moonPhase]}
+            {showFortnightDay ? ` ${t.formatNumber(day.fortnightDay)}` : ""}
           </p>
         </div>
       </div>
