@@ -67,7 +67,7 @@ export function WeekView({
   }
 
   return (
-    <div className="w-full">
+    <div className="w-full rounded-2xl surface-shell p-1.5 md:p-2">
       <AnimatePresence mode="popLayout" initial={false}>
         <motion.div
           key={weekDays[0]?.jdn}
@@ -82,7 +82,7 @@ export function WeekView({
           animate={{ x: 0, opacity: 1 }}
           exit={{ x: direction > 0 ? -80 : 80, opacity: 0 }}
           transition={{ duration: 0.2, ease: "easeInOut" }}
-          className="grid grid-cols-7 grid-rows-1 gap-px bg-border/10 rounded-lg overflow-hidden min-h-[580px]"
+          className="grid grid-cols-7 grid-rows-1 gap-px bg-border/10 rounded-xl overflow-hidden min-h-[580px]"
         >
           {weekDays.map((d) => {
             const isToday = d.jdn === todayJdn
@@ -141,7 +141,7 @@ export function WeekView({
                 {/* Weekday header */}
                 <div
                   className={cn(
-                    "text-xs font-semibold tracking-wide leading-relaxed mb-1",
+                    "kicker-label text-xs font-semibold tracking-wide leading-relaxed mb-1",
                     d.weekday === 1 || d.weekday === 0
                       ? "text-destructive"
                       : "text-muted-foreground",
@@ -389,7 +389,7 @@ function InfiniteWeekList({
   return (
     <div
       ref={scrollRef}
-      className="relative overflow-y-auto rounded-lg h-[308px] overscroll-y-contain"
+      className="surface-shell relative overflow-y-auto rounded-lg h-[308px] overscroll-y-contain p-px"
     >
       <div ref={topSentinelRef} className="h-px" />
 

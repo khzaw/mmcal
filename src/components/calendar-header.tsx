@@ -46,8 +46,13 @@ export function CalendarHeader({
   const { t, localeCode } = useI18n()
 
   return (
-    <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
-      <h2 className="text-3xl md:text-5xl font-bold text-foreground tracking-tight leading-tight overflow-hidden">
+    <div className="flex flex-col gap-5 xl:flex-row xl:items-end xl:justify-between">
+      <h2
+        className={cn(
+          "text-3xl md:text-5xl font-bold text-foreground tracking-tight overflow-hidden drop-shadow-[0_1px_0_rgba(255,255,255,0.08)]",
+          localeCode === "mm" ? "leading-[1.24]" : "leading-tight",
+        )}
+      >
         <AnimatePresence mode="wait">
           <motion.span
             key={view === "year" ? `${year}` : `${year}-${month}`}
@@ -71,15 +76,15 @@ export function CalendarHeader({
       </h2>
 
       <div className="print:hidden flex flex-col items-start xl:items-end gap-2">
-        <div className="flex flex-wrap items-center gap-2">
-          <div className="inline-flex items-center rounded-xl border border-border/70 bg-card/60 overflow-hidden">
+        <div className="surface-panel rounded-2xl p-2 flex flex-wrap items-center gap-2">
+          <div className="inline-flex items-center rounded-xl border border-border/60 bg-background/55 overflow-hidden shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
             <motion.div whileTap={{ scale: 0.92 }} transition={springPresets.snappy}>
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={onPrev}
                 aria-label="Previous"
-                className="h-10 w-10 rounded-none border-0 hover:bg-accent/70"
+                className="h-10 w-10 rounded-none border-0 hover:bg-accent/72"
               >
                 <ChevronLeft className="h-4 w-4" />
               </Button>
@@ -90,7 +95,7 @@ export function CalendarHeader({
                 size="sm"
                 onClick={onToday}
                 className={cn(
-                  "h-10 rounded-none border-x border-border/70 px-4 gap-1.5 text-xs",
+                  "h-10 rounded-none border-x border-border/60 px-4 gap-1.5 text-xs hover:bg-accent/72",
                   localeCode === "en" && "tracking-[0.06em]",
                 )}
               >
@@ -115,7 +120,7 @@ export function CalendarHeader({
             value={month.toString()}
             onValueChange={(val) => onMonthChange(Number.parseInt(val))}
           >
-            <SelectTrigger className="w-[150px] h-10 text-xs rounded-xl border-border/70 bg-card/60 hover:bg-accent/60 transition-colors">
+            <SelectTrigger className="w-[150px] h-10 text-xs rounded-xl border-border/60 bg-background/55 hover:bg-accent/62 transition-colors shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -130,7 +135,7 @@ export function CalendarHeader({
             value={year.toString()}
             onValueChange={(val) => onYearChange(Number.parseInt(val))}
           >
-            <SelectTrigger className="w-[110px] h-10 text-xs rounded-xl border-border/70 bg-card/60 hover:bg-accent/60 transition-colors">
+            <SelectTrigger className="w-[110px] h-10 text-xs rounded-xl border-border/60 bg-background/55 hover:bg-accent/62 transition-colors shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="max-h-[240px]">
@@ -147,7 +152,7 @@ export function CalendarHeader({
               variant="ghost"
               size="icon"
               onClick={onOpenCommandPalette}
-              className="h-10 w-10 rounded-xl border border-border/70 bg-card/60 hover:bg-accent/70"
+              className="h-10 w-10 rounded-xl border border-border/60 bg-background/55 hover:bg-accent/72 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
               aria-label="Search"
             >
               <Search className="h-4 w-4" />
@@ -159,7 +164,7 @@ export function CalendarHeader({
               variant="ghost"
               size="icon"
               onClick={onPrint}
-              className="h-10 w-10 rounded-xl border border-border/70 bg-card/60 hover:bg-accent/70"
+              className="h-10 w-10 rounded-xl border border-border/60 bg-background/55 hover:bg-accent/72 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
               aria-label={t.ui.print ?? "Print"}
             >
               <Printer className="h-4 w-4" />
@@ -168,7 +173,7 @@ export function CalendarHeader({
         </div>
 
         <Tabs value={view} onValueChange={(v) => onViewChange(v as ViewMode)}>
-          <TabsList className="h-10 rounded-xl border border-border/70 bg-card/60 p-1">
+          <TabsList className="h-10 rounded-xl border border-border/60 bg-background/55 p-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
             <TabsTrigger
               value="month"
               className={cn(

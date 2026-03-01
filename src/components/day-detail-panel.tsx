@@ -213,7 +213,7 @@ export function DayDetailPanel({ day, hideHero = false }: DayDetailPanelProps) {
           variants={detailSectionStagger.container}
           initial="hidden"
           animate="visible"
-          className="space-y-4"
+          className="space-y-3.5"
         >
           <AnimatePresence initial={false}>
             {!hideHero && (
@@ -226,14 +226,14 @@ export function DayDetailPanel({ day, hideHero = false }: DayDetailPanelProps) {
                 transition={{ duration: 0.26, ease: "easeInOut" }}
                 className="overflow-hidden"
               >
-                <div className="rounded-2xl bg-background/45 px-4 pt-2.5 pb-4 md:px-5 md:pt-3">
+                <div className="surface-panel rounded-2xl px-4 pt-2.5 pb-4 md:px-5 md:pt-3">
                   <div className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-4">
                     <AnimatedMoon phase={moonPhase} fortnightDay={fortnightDay} size={88} />
                     <div className="min-w-0">
                       <p
                         className={cn(
                           "text-[10px] md:text-[11px] text-muted-foreground/65",
-                          localeCode === "en" && "tracking-[0.06em]",
+                          localeCode === "en" && "kicker-label tracking-[0.07em]",
                         )}
                       >
                         {t.weekdays[weekday]}
@@ -360,7 +360,7 @@ export function DayDetailPanel({ day, hideHero = false }: DayDetailPanelProps) {
 
           <motion.div
             variants={detailSectionStagger.item}
-            className="rounded-2xl bg-background/35 p-4"
+            className="surface-panel rounded-2xl p-4"
           >
             {detailRows.map((row, idx) => (
               <div key={row.label}>
@@ -393,7 +393,7 @@ export function DayDetailPanel({ day, hideHero = false }: DayDetailPanelProps) {
                     {row.value}
                   </span>
                 </div>
-                {idx < detailRows.length - 1 && <Separator />}
+                {idx < detailRows.length - 1 && <Separator className="bg-border/45" />}
               </div>
             ))}
           </motion.div>
@@ -401,11 +401,11 @@ export function DayDetailPanel({ day, hideHero = false }: DayDetailPanelProps) {
           {astroBadges.length > 0 && (
             <motion.div
               variants={detailSectionStagger.item}
-              className="rounded-2xl bg-background/35 px-4 pt-4 pb-3"
+              className="surface-panel rounded-2xl px-4 pt-4 pb-3"
             >
               <h4
                 className={cn(
-                  "text-xs mb-2 text-muted-foreground",
+                  "text-xs mb-2 text-muted-foreground kicker-label",
                   localeCode === "en" && "tracking-[0.06em]",
                 )}
               >
@@ -443,7 +443,7 @@ export function DayDetailPanel({ day, hideHero = false }: DayDetailPanelProps) {
             <motion.div variants={detailSectionStagger.item}>
               <h4
                 className={cn(
-                  "text-xs mb-2 text-muted-foreground",
+                  "text-xs mb-2 text-muted-foreground kicker-label",
                   localeCode === "en" && "tracking-[0.06em]",
                 )}
               >

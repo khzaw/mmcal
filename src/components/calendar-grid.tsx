@@ -44,15 +44,15 @@ export function CalendarGrid({
   }, [days, firstDayWeekday])
 
   return (
-    <div className="w-full">
+    <div className="w-full rounded-2xl surface-shell p-1.5 md:p-2">
       {/* Weekday headers — Sunday first */}
-      <div className="grid grid-cols-7 gap-px mb-1">
+      <div className="grid grid-cols-7 gap-px mb-1 px-0.5">
         {SUNDAY_FIRST.map((wd, i) => (
           <div
             key={wd}
             className={cn(
               "text-left text-[11px] py-2.5 pl-1.5 md:pl-2 leading-relaxed",
-              "tracking-[0.08em]",
+              "kicker-label tracking-[0.08em]",
               i === 0 || i === 6 ? "text-destructive/70" : "text-muted-foreground/70",
             )}
           >
@@ -72,7 +72,7 @@ export function CalendarGrid({
           animate={{ x: 0, opacity: 1 }}
           exit={{ x: direction > 0 ? -80 : 80, opacity: 0 }}
           transition={{ duration: 0.2, ease: "easeInOut" }}
-          className="relative grid grid-cols-7 gap-px rounded-2xl border border-border/70 bg-border/15 p-px overflow-hidden"
+          className="relative grid grid-cols-7 gap-px rounded-xl border border-border/55 bg-border/15 p-px overflow-hidden"
         >
           <motion.div
             aria-hidden="true"
@@ -144,7 +144,7 @@ export function CalendarGrid({
                   "bg-card/78 h-[78px] md:h-[108px] p-1.5 md:p-2 text-left relative group overflow-hidden",
                   "transition-[transform,background-color,box-shadow] duration-300 ease-out will-change-transform",
                   "cursor-pointer",
-                  "hover:bg-accent/68 hover:shadow-[0_12px_26px_-16px_rgba(0,0,0,0.65)] focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset",
+                  "hover:bg-accent/68 hover:shadow-[0_14px_30px_-20px_rgba(0,0,0,0.78)] focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset",
                   isToday && !isSelected && "bg-primary/5",
                   hasHoliday && !isSelected && "bg-destructive/10",
                   isSelected && "bg-primary/10",
