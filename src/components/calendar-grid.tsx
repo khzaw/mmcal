@@ -1,4 +1,3 @@
-import { springPresets } from "@/lib/animations"
 import type { CalendarDayInfo } from "@/lib/burmese-calendar"
 import { getGregorianMonthDays } from "@/lib/burmese-calendar"
 import { getCircledDayDigitOffsetClass } from "@/lib/burmese-digit-offset"
@@ -211,7 +210,7 @@ export function CalendarGrid({
                     className={cn(
                       "truncate",
                       isEnglish
-                        ? "text-[9px] md:text-[10px] leading-normal"
+                        ? "mt-[6px] text-[9px] md:text-[10px] leading-normal"
                         : "text-[10px] md:text-[11px] leading-relaxed",
                       isHolidayFullMoon
                         ? isEnglish
@@ -253,9 +252,12 @@ export function CalendarGrid({
                 {/* Sabbath indicator */}
                 {day.sabbath === 1 && (
                   <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={springPresets.bouncy}
+                    animate={{ scale: [0.99, 1.03, 0.99], opacity: [0.72, 0.9, 0.72] }}
+                    transition={{
+                      duration: 3.1,
+                      repeat: Number.POSITIVE_INFINITY,
+                      ease: "easeInOut",
+                    }}
                     className="absolute bottom-1 right-1 w-1.5 h-1.5 rounded-full bg-destructive z-10"
                   />
                 )}

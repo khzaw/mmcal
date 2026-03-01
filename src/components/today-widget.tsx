@@ -42,7 +42,7 @@ export function TodayWidget({ day }: TodayWidgetProps) {
       initial={{ opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.16, ease: "easeOut" }}
-      className="surface-shell relative overflow-hidden rounded-2xl px-4 py-3.5"
+      className="surface-shell border-0 shadow-none relative overflow-hidden rounded-2xl px-4 py-3.5"
     >
       <div className="flex items-center justify-between gap-2">
         <p
@@ -54,8 +54,8 @@ export function TodayWidget({ day }: TodayWidgetProps) {
           {t.ui.today}
         </p>
         <Badge
-          variant="outline"
-          className="h-5 rounded-full px-2 text-[10px] text-muted-foreground border-border/65 bg-background/60"
+          variant="secondary"
+          className="h-5 rounded-full px-2 text-[10px] text-muted-foreground border-0 bg-background/62"
         >
           {t.weekdays[day.weekday]}
         </Badge>
@@ -81,15 +81,15 @@ export function TodayWidget({ day }: TodayWidgetProps) {
       </div>
 
       <div className="mt-3 grid grid-cols-3 gap-2">
-        <div className="surface-panel-muted rounded-lg px-2 py-1.5">
+        <div className="rounded-lg bg-background/62 px-2 py-1.5">
           <p className="text-[10px] text-muted-foreground/80">{t.ui.myanmarYear}</p>
           <p className="text-xs text-foreground">{t.formatNumber(day.myanmar.my)}</p>
         </div>
-        <div className="surface-panel-muted rounded-lg px-2 py-1.5">
+        <div className="rounded-lg bg-background/62 px-2 py-1.5">
           <p className="text-[10px] text-muted-foreground/80">{t.ui.sasanaYear}</p>
           <p className="text-xs text-foreground">{t.formatNumber(my2sy(day.myanmar.my))}</p>
         </div>
-        <div className="surface-panel-muted rounded-lg px-2 py-1.5">
+        <div className="rounded-lg bg-background/62 px-2 py-1.5">
           <p className="text-[10px] text-muted-foreground/80">{t.ui.yearType}</p>
           <p className="text-xs text-foreground truncate">{t.yearTypes[day.myanmar.myt]}</p>
         </div>
@@ -108,13 +108,12 @@ export function TodayWidget({ day }: TodayWidgetProps) {
           {dailyBrief.map((item) => (
             <Badge
               key={item.key}
-              variant="outline"
+              variant="secondary"
               className={cn(
-                "rounded-full px-2 py-0.5 text-[10px] border-border/65 bg-background/60",
-                item.tone === "holiday" && "border-destructive/80 bg-destructive/85 text-white",
-                item.tone === "warning" &&
-                  "text-destructive border-destructive/40 bg-destructive/15",
-                item.tone === "good" && "border-chart-2/45 bg-chart-2/14 text-chart-2",
+                "rounded-full px-2 py-0.5 text-[10px] border-0 bg-background/62",
+                item.tone === "holiday" && "bg-destructive/85 text-white",
+                item.tone === "warning" && "text-destructive bg-destructive/15",
+                item.tone === "good" && "bg-chart-2/14 text-chart-2",
                 item.tone === "neutral" && "text-muted-foreground",
               )}
             >

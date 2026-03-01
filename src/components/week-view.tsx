@@ -264,7 +264,15 @@ export function WeekView({
 
                 {/* Sabbath indicator */}
                 {d.sabbath === 1 && (
-                  <div className="absolute bottom-1 right-1 w-1.5 h-1.5 rounded-full bg-destructive" />
+                  <motion.div
+                    className="absolute bottom-1 right-1 w-1.5 h-1.5 rounded-full bg-destructive"
+                    animate={{ opacity: [0.72, 0.9, 0.72], scale: [0.99, 1.03, 0.99] }}
+                    transition={{
+                      duration: 3.1,
+                      repeat: Number.POSITIVE_INFINITY,
+                      ease: "easeInOut",
+                    }}
+                  />
                 )}
               </motion.button>
             )
@@ -535,7 +543,15 @@ function InfiniteWeekList({
 
               {/* Sabbath dot */}
               {d.sabbath === 1 && (
-                <div className="absolute bottom-1 right-1 w-1.5 h-1.5 rounded-full bg-destructive" />
+                <motion.div
+                  className="absolute bottom-1 right-1 w-1.5 h-1.5 rounded-full bg-destructive"
+                  animate={{ opacity: [0.72, 0.9, 0.72], scale: [0.99, 1.03, 0.99] }}
+                  transition={{
+                    duration: 3.1,
+                    repeat: Number.POSITIVE_INFINITY,
+                    ease: "easeInOut",
+                  }}
+                />
               )}
             </button>
           </Fragment>

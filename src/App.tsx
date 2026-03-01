@@ -2,7 +2,6 @@ import { AppHeader } from "@/components/app-header"
 import { CalendarGrid } from "@/components/calendar-grid"
 import { CalendarHeader } from "@/components/calendar-header"
 import { DayDetailPanel } from "@/components/day-detail-panel"
-import { MoonPhaseIcon } from "@/components/moon-phase-icon"
 import { ThemeProvider } from "@/components/theme-toggle"
 import { TodayWidget } from "@/components/today-widget"
 import { WeekView } from "@/components/week-view"
@@ -115,12 +114,6 @@ function CalendarApp() {
   })
   const showTodayWidget = shouldShowTodayWidget(isMobile)
   const legendDay = state.selectedDay ?? todayInfo
-  const fullMoonTone =
-    (legendDay.holidays.length > 0 || legendDay.holidays2.length > 0) &&
-    legendDay.moonPhase === 1 &&
-    legendDay.jdn === state.selectedJdn
-      ? "holiday"
-      : "neutral"
 
   return (
     <main className="min-h-screen bg-background flex flex-col">
@@ -239,54 +232,32 @@ function CalendarApp() {
           </AnimatePresence>
         </div>
 
-        {/* Moon legend */}
+        {/* Sabbath legend */}
         {state.view !== "year" && (
           <div className="mt-auto pt-6 pb-6">
             <Separator className="mb-4" />
             <p className="mb-2 text-[11px] text-muted-foreground/75">
-              {t.ui.moonLegend ?? "Moon Legend"}
+              {localeCode === "mm" ? "အညွှန်း" : "Legend"}
             </p>
             <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-muted-foreground">
-              {[0, 1, 2, 3].map((phase) => {
-                const isActive = legendDay.moonPhase === phase
-                return (
-                  <motion.div
-                    key={phase}
-                    className="inline-flex items-center gap-1.5"
-                    animate={{
-                      opacity: isActive ? 1 : 0.58,
-                      scale: isActive ? 1.06 : 1,
-                      y: isActive ? -1 : 0,
-                    }}
-                    transition={{ type: "spring", stiffness: 360, damping: 28, mass: 0.55 }}
-                  >
-                    <MoonPhaseIcon
-                      phase={phase}
-                      size={12}
-                      fullMoonTone={phase === 1 ? fullMoonTone : "neutral"}
-                    />
-                    <span>{t.moonPhases[phase]}</span>
-                  </motion.div>
-                )
-              })}
               <motion.div
                 className="inline-flex items-center gap-1.5"
                 animate={{
-                  opacity: legendDay.sabbath === 1 ? 1 : 0.58,
-                  scale: legendDay.sabbath === 1 ? 1.06 : 1,
-                  y: legendDay.sabbath === 1 ? -1 : 0,
+                  opacity: legendDay.sabbath === 1 ? 1 : 0.72,
                 }}
                 transition={{ type: "spring", stiffness: 360, damping: 28, mass: 0.55 }}
               >
                 <motion.span
                   className="w-2 h-2 rounded-full bg-destructive inline-block"
                   animate={{
-                    boxShadow:
-                      legendDay.sabbath === 1
-                        ? "0 0 0 4px rgba(239,68,68,0.16)"
-                        : "0 0 0 0 rgba(239,68,68,0)",
+                    opacity: legendDay.sabbath === 1 ? [0.78, 0.92, 0.78] : [0.56, 0.7, 0.56],
+                    scale: legendDay.sabbath === 1 ? [0.99, 1.03, 0.99] : [0.99, 1.02, 0.99],
                   }}
-                  transition={{ duration: 0.28, ease: "easeOut" }}
+                  transition={{
+                    duration: 3.1,
+                    repeat: Number.POSITIVE_INFINITY,
+                    ease: "easeInOut",
+                  }}
                 />
                 {t.astro.Sabbath ?? "Sabbath"}
               </motion.div>

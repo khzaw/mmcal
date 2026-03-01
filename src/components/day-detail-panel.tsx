@@ -284,10 +284,10 @@ export function DayDetailPanel({ day, hideHero = false }: DayDetailPanelProps) {
               <DialogTrigger asChild>
                 <Button
                   type="button"
-                  variant="outline"
+                  variant="ghost"
                   size="sm"
                   className={cn(
-                    "rounded-full border-border/70 bg-background/45 hover:bg-accent/70 gap-1.5",
+                    "rounded-full border-0 bg-background/55 hover:bg-accent/72 gap-1.5 shadow-none",
                     localeCode === "en" && "tracking-[0.04em]",
                   )}
                 >
