@@ -1,20 +1,21 @@
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import type { ViewMode } from "@/hooks/use-calendar-state";
-import { commandItemStagger } from "@/lib/animations";
-import { useI18n } from "@/lib/i18n/context";
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-import { Command } from "cmdk";
-import { motion } from "framer-motion";
-import { CalendarDays, Eye, Globe, Search } from "lucide-react";
-import { useCallback, useState } from "react";
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog"
+import { normalizeSearchInput, tryParseDate } from "@/components/command-palette.utils"
+import type { ViewMode } from "@/hooks/use-calendar-state"
+import { commandItemStagger } from "@/lib/animations"
+import { useI18n } from "@/lib/i18n/context"
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden"
+import { Command } from "cmdk"
+import { motion } from "framer-motion"
+import { CalendarDays, Eye, Globe, Search } from "lucide-react"
+import { useCallback, useState } from "react"
 
 interface CommandPaletteProps {
-  open: boolean;
-  onClose: () => void;
-  onGoToDate: (year: number, month: number, day: number) => void;
-  onSetView: (view: ViewMode) => void;
-  onToday: () => void;
-  onToggleLocale: () => void;
+  open: boolean
+  onClose: () => void
+  onGoToDate: (year: number, month: number, day: number) => void
+  onSetView: (view: ViewMode) => void
+  onToday: () => void
+  onToggleLocale: () => void
 }
 
 export function CommandPalette({
@@ -25,64 +26,70 @@ export function CommandPalette({
   onToday,
   onToggleLocale,
 }: CommandPaletteProps) {
-  const { t, localeCode } = useI18n();
-  const [search, setSearch] = useState("");
+  const { t, localeCode } = useI18n()
+  const [search, setSearch] = useState("")
+  const normalizedSearch = normalizeSearchInput(search)
+  const toggleLocaleLabel = localeCode === "mm" ? "Switch to English" : "မြန်မာသို့ ပြောင်းမည်"
+  const searchHint =
+    localeCode === "mm" ? "ဥပမာ: ယနေ့၊ လ၊ ၂၀၂၆-၃-၄" : "Examples: today, month, 2026-03-04"
 
   const handleSelect = useCallback(
     (value: string) => {
       if (value === "today") {
-        onToday();
+        onToday()
       } else if (value === "month" || value === "week" || value === "year") {
-        onSetView(value);
+        onSetView(value)
       } else if (value === "toggle-locale") {
-        onToggleLocale();
+        onToggleLocale()
       } else if (value.startsWith("date:")) {
-        const parts = value.replace("date:", "").split("-");
+        const parts = value.replace("date:", "").split("-")
         if (parts.length === 3) {
-          onGoToDate(Number(parts[0]), Number(parts[1]), Number(parts[2]));
+          onGoToDate(Number(parts[0]), Number(parts[1]), Number(parts[2]))
         }
       }
-      setSearch("");
-      onClose();
+      setSearch("")
+      onClose()
     },
     [onToday, onSetView, onToggleLocale, onGoToDate, onClose],
-  );
+  )
 
   // Try to parse search as a date
-  const parsedDate = tryParseDate(search);
+  const parsedDate = tryParseDate(normalizedSearch)
 
   const itemClass =
-    "flex items-center gap-2.5 px-3 py-2 text-sm leading-relaxed rounded-md cursor-pointer transition-colors text-foreground data-[selected=true]:bg-accent data-[selected=true]:text-accent-foreground";
+    "flex items-center gap-2.5 px-3 py-2 text-sm leading-relaxed rounded-md cursor-pointer transition-colors text-foreground data-[selected=true]:bg-accent data-[selected=true]:text-accent-foreground"
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
       <DialogContent
-        className="p-0 gap-0 max-w-md overflow-hidden bg-card border-border"
+        className="p-0 gap-0 max-w-md sm:max-w-md overflow-hidden bg-card border-border !top-1/2 !left-1/2 !-translate-x-1/2 !-translate-y-1/2"
         showCloseButton={false}
       >
         <VisuallyHidden>
           <DialogTitle>{t.ui.goToDate}</DialogTitle>
         </VisuallyHidden>
+        <VisuallyHidden>
+          <DialogDescription>{searchHint}</DialogDescription>
+        </VisuallyHidden>
         <Command className="bg-transparent" loop shouldFilter={true}>
-          <div className="flex items-center border-b border-border px-3">
-            <Search className="mr-2 h-4 w-4 shrink-0 text-muted-foreground" />
-            <Command.Input
-              value={search}
-              onValueChange={setSearch}
-              placeholder={t.ui.goToDate}
-              className="flex h-12 w-full bg-transparent py-3 text-sm leading-relaxed outline-none placeholder:text-muted-foreground text-foreground"
-            />
+          <div className="border-b border-border">
+            <div className="flex items-center px-3">
+              <Search className="mr-2 h-4 w-4 shrink-0 text-muted-foreground" />
+              <Command.Input
+                value={search}
+                onValueChange={setSearch}
+                placeholder={t.ui.goToDate}
+                className="flex h-12 w-full bg-transparent py-3 text-sm leading-relaxed outline-none placeholder:text-muted-foreground text-foreground"
+              />
+            </div>
+            <p className="px-3 pb-2 text-xs leading-relaxed text-muted-foreground">{searchHint}</p>
           </div>
           <Command.List className="max-h-[320px] overflow-y-auto p-2">
             <Command.Empty className="py-8 text-center text-sm text-muted-foreground leading-relaxed">
               {t.ui.noResults}
             </Command.Empty>
 
-            <motion.div
-              variants={commandItemStagger.container}
-              initial="hidden"
-              animate="visible"
-            >
+            <motion.div variants={commandItemStagger.container} initial="hidden" animate="visible">
               {/* Go to parsed date */}
               {parsedDate && (
                 <Command.Group
@@ -92,12 +99,18 @@ export function CommandPalette({
                   <motion.div variants={commandItemStagger.item}>
                     <Command.Item
                       value={`date:${parsedDate.year}-${parsedDate.month}-${parsedDate.day}`}
+                      keywords={[
+                        search,
+                        normalizedSearch,
+                        `${parsedDate.year}-${parsedDate.month}-${parsedDate.day}`,
+                        `${parsedDate.year}/${parsedDate.month}/${parsedDate.day}`,
+                        `${parsedDate.year}-${String(parsedDate.month).padStart(2, "0")}-${String(parsedDate.day).padStart(2, "0")}`,
+                      ]}
                       onSelect={handleSelect}
                       className={itemClass}
                     >
                       <CalendarDays className="h-4 w-4 text-muted-foreground shrink-0" />
-                      {t.gregorianMonths[parsedDate.month - 1]}{" "}
-                      {t.formatNumber(parsedDate.day)},{" "}
+                      {t.gregorianMonths[parsedDate.month - 1]} {t.formatNumber(parsedDate.day)},{" "}
                       {t.formatNumber(parsedDate.year)}
                     </Command.Item>
                   </motion.div>
@@ -112,6 +125,7 @@ export function CommandPalette({
                 <motion.div variants={commandItemStagger.item}>
                   <Command.Item
                     value="today"
+                    keywords={[t.ui.today, "today", "now"]}
                     onSelect={handleSelect}
                     className={itemClass}
                   >
@@ -122,13 +136,19 @@ export function CommandPalette({
                 <motion.div variants={commandItemStagger.item}>
                   <Command.Item
                     value="toggle-locale"
+                    keywords={[
+                      toggleLocaleLabel,
+                      "toggle locale",
+                      "switch language",
+                      "language",
+                      localeCode === "mm" ? "english" : "myanmar",
+                      localeCode === "mm" ? "en" : "mm",
+                    ]}
                     onSelect={handleSelect}
                     className={itemClass}
                   >
                     <Globe className="h-4 w-4 text-muted-foreground shrink-0" />
-                    {localeCode === "mm"
-                      ? "Switch to English"
-                      : "မြန်မာသို့ ပြောင်းမည်"}
+                    {toggleLocaleLabel}
                   </Command.Item>
                 </motion.div>
               </Command.Group>
@@ -140,6 +160,7 @@ export function CommandPalette({
                 <motion.div variants={commandItemStagger.item}>
                   <Command.Item
                     value="month"
+                    keywords={[t.ui.monthView, "month", "m"]}
                     onSelect={handleSelect}
                     className={itemClass}
                   >
@@ -150,6 +171,7 @@ export function CommandPalette({
                 <motion.div variants={commandItemStagger.item}>
                   <Command.Item
                     value="week"
+                    keywords={[t.ui.weekView, "week", "w"]}
                     onSelect={handleSelect}
                     className={itemClass}
                   >
@@ -160,6 +182,7 @@ export function CommandPalette({
                 <motion.div variants={commandItemStagger.item}>
                   <Command.Item
                     value="year"
+                    keywords={[t.ui.yearView, "year", "y"]}
                     onSelect={handleSelect}
                     className={itemClass}
                   >
@@ -173,37 +196,5 @@ export function CommandPalette({
         </Command>
       </DialogContent>
     </Dialog>
-  );
-}
-
-function tryParseDate(
-  input: string,
-): { year: number; month: number; day: number } | null {
-  if (!input) return null;
-
-  // Try YYYY-MM-DD or YYYY/MM/DD
-  const isoMatch = input.match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})$/);
-  if (isoMatch) {
-    const [, y, m, d] = isoMatch;
-    const year = Number(y);
-    const month = Number(m);
-    const day = Number(d);
-    if (month >= 1 && month <= 12 && day >= 1 && day <= 31) {
-      return { year, month, day };
-    }
-  }
-
-  // Try MM/DD/YYYY or DD/MM/YYYY (assume MM/DD)
-  const usMatch = input.match(/^(\d{1,2})[-/](\d{1,2})[-/](\d{4})$/);
-  if (usMatch) {
-    const [, a, b, y] = usMatch;
-    const month = Number(a);
-    const day = Number(b);
-    const year = Number(y);
-    if (month >= 1 && month <= 12 && day >= 1 && day <= 31) {
-      return { year, month, day };
-    }
-  }
-
-  return null;
+  )
 }
