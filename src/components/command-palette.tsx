@@ -30,6 +30,10 @@ export function CommandPalette({
   const [search, setSearch] = useState("")
   const normalizedSearch = normalizeSearchInput(search)
   const toggleLocaleLabel = localeCode === "mm" ? "Switch to English" : "မြန်မာသို့ ပြောင်းမည်"
+  const todayLabel = t.ui.today ?? "Today"
+  const monthLabel = t.ui.monthView ?? "Month"
+  const weekLabel = t.ui.weekView ?? "Week"
+  const yearLabel = t.ui.yearView ?? "Year"
   const searchHint =
     localeCode === "mm" ? "ဥပမာ: ယနေ့၊ လ၊ ၂၀၂၆-၃-၄" : "Examples: today, month, 2026-03-04"
 
@@ -125,12 +129,12 @@ export function CommandPalette({
                 <motion.div variants={commandItemStagger.item}>
                   <Command.Item
                     value="today"
-                    keywords={[t.ui.today, "today", "now"]}
+                    keywords={[todayLabel, "today", "now"]}
                     onSelect={handleSelect}
                     className={itemClass}
                   >
                     <CalendarDays className="h-4 w-4 text-muted-foreground shrink-0" />
-                    {t.ui.today}
+                    {todayLabel}
                   </Command.Item>
                 </motion.div>
                 <motion.div variants={commandItemStagger.item}>
@@ -160,34 +164,34 @@ export function CommandPalette({
                 <motion.div variants={commandItemStagger.item}>
                   <Command.Item
                     value="month"
-                    keywords={[t.ui.monthView, "month", "m"]}
+                    keywords={[monthLabel, "month", "m"]}
                     onSelect={handleSelect}
                     className={itemClass}
                   >
                     <Eye className="h-4 w-4 text-muted-foreground shrink-0" />
-                    {t.ui.monthView}
+                    {monthLabel}
                   </Command.Item>
                 </motion.div>
                 <motion.div variants={commandItemStagger.item}>
                   <Command.Item
                     value="week"
-                    keywords={[t.ui.weekView, "week", "w"]}
+                    keywords={[weekLabel, "week", "w"]}
                     onSelect={handleSelect}
                     className={itemClass}
                   >
                     <Eye className="h-4 w-4 text-muted-foreground shrink-0" />
-                    {t.ui.weekView}
+                    {weekLabel}
                   </Command.Item>
                 </motion.div>
                 <motion.div variants={commandItemStagger.item}>
                   <Command.Item
                     value="year"
-                    keywords={[t.ui.yearView, "year", "y"]}
+                    keywords={[yearLabel, "year", "y"]}
                     onSelect={handleSelect}
                     className={itemClass}
                   >
                     <Eye className="h-4 w-4 text-muted-foreground shrink-0" />
-                    {t.ui.yearView}
+                    {yearLabel}
                   </Command.Item>
                 </motion.div>
               </Command.Group>
